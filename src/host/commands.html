@@ -1,0 +1,62 @@
+  
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="css/style.css">
+		<script type="module" src="js/script.js" defer></script>
+
+		<title>TheBot - Commands</title>
+	</head>
+	<body>
+		<div class="top">
+			<div class="bar black card left-align large">
+				<a href="/" class="bar-item button padding-large dark-grey hover-grey">Home</a>
+				<a href="commands.html" class="bar-item button padding-large dark-grey hover-grey">Commands</a>
+				<a href="changelog.html" class="bar-item button padding-large dark-grey hover-grey">Changelogs</a>
+				<a href="auth.html" class="bar-item button padding-large dark-grey hover-grey" id="login_button">LogIn</a>
+				<p class="bar-itme black padding-large right-align" style="margin-top: 0px;" id="login_text"></p>
+			</div>
+		</div>
+		<header class="container black center" style="padding:50px 16px">
+			<h1 class="margin jumbo">TheBot</h1>
+			<p class="xlarge">Welcome to the TheBot commands site!</p>
+			<p class="xlarge">Here you can see all commands!</p>
+		</header>
+		<div id="commands">
+
+		</div>
+		<script type="module">
+			import { SocketConnection } from "./js/websocket.js";
+
+			var ws = new SocketConnection("ws://" + location.host);
+			ws.initialize().then(async function (socket) {
+				var commands = await ws.socket_call("api/commands", {});
+
+				var left = "<div class=\"row-padding dark-grey padding-64 container\"><div class=\"content\"><div class=\"twothird\"><p>%text%</p></div></div></div>";
+				var right = "<div class=\"row-padding black padding-64 container\"><div class=\"content\"><div class=\"third center\"><i class=\"fa fa-coffee padding-64 text-red margin-right\"></i></div><div class=\"twothird\"><p>%text%</p></div></div></div>";
+
+				let commands_div = document.getElementById("commands");
+
+				var side = true;
+
+				commands.commands.forEach(element => {
+					let tmp = document.createElement("div");
+					var text = `<h2><big>${element.name}</big></h2><p><code>${element.help_long.replace(/\n/g, "<br>")}</code></p><i>${element.perm ? "Note: This commands needs higher permissions.<br>This commands requires: " + element.perm + "<br>" : ""}</i><br><i>${element.executor.subsystems ? "Note: This command only works on some platform's.<br>This commands works on: " + element.executor.subsystems.join(", ") + "<br>" : ""}</i><br>`;
+					tmp.innerHTML = side ? left.replace("%text%", text) : right.replace("%text%", text);
+					side = !side;
+					commands_div.appendChild(tmp);
+				});
+
+				ws.websocket.onclose = _ => {
+					console.log("Connection closed.");
+				};
+				ws.websocket.close();
+			});
+		</script>
+		<footer class="bar black card left-align">
+			<p style="display: inline-flexbox;">Copyright (c) 2021 Glowman554</p>
+		</footer>
+	</body>
+</html>

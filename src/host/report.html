@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="css/style.css">
+		<script type="module" src="js/script.js"></script>
+
+		<title>TheBot - Report</title>
+	</head>
+	<body>
+		<div class="top">
+			<div class="bar black card left-align large">
+				<a href="/" class="bar-item button padding-large dark-grey hover-grey">Home</a>
+				<a href="commands.html" class="bar-item button padding-large dark-grey hover-grey">Commands</a>
+				<a href="changelog.html" class="bar-item button padding-large dark-grey hover-grey">Changelogs</a>
+				<a href="auth.html" class="bar-item button padding-large dark-grey hover-grey" id="login_button">LogIn</a>
+				<p class="bar-itme black padding-large right-align" style="margin-top: 0px;" id="login_text"></p>
+			</div>
+		</div>
+		<header class="container black center" style="padding:50px 16px">
+			<h1 class="margin jumbo">TheBot</h1>
+			<p class="xlarge">Welcome to the TheBot report site!</p>
+			<p class="xlarge">Here you can report bugs or users!</p>
+		</header>
+		<div class="row-padding dark-grey padding-64 container">
+			<div class="content">
+				<div class="twothird">
+					<datalist id="report-type">
+						<option value="bug"></option>
+						<option value="abuse"></option>
+					</datalist>
+					<p style="display: inline;">
+						Report type:
+					</p>
+					<input style="display: inline-block; left: 200px; position: sticky; width: 50%;" list="report-type" id="type">
+					<br>
+					<p style="display: inline;">
+						Report description:
+					</p>
+					<input style="display: inline-block; left: 200px; position: sticky; width: 50%;" id="description">
+					<br>
+					<button class="button grey hover-black" id="report" style="width: 20%;">Send report!</button>
+
+					<script type="module">
+						import { SocketConnection } from "./js/websocket.js";
+
+						document.getElementById("report").onclick = () => {
+							if (document.getElementById("type").value == "") {
+								alert("Please put in a report type!");
+								return;
+							}
+							if (document.getElementById("description").value == "") {
+								alert("Please put in a report description!");
+								return;
+							}
+
+							var ws = new SocketConnection("ws://" + location.host);
+							ws.initialize().then(async function (socket) {
+								ws.socket_call("api/report", {
+									report: `${document.getElementById("type").value}: ${document.getElementById("description").value}`
+								});
+
+								ws.websocket.onclose = _ => {
+									console.log("Connection closed.");
+								};
+								ws.websocket.close();
+							});
+						}
+					</script>
+				</div>
+			</div>
+		</div>
+		<footer class="bar black card left-align">
+			<p style="display: inline-flexbox;">Copyright (c) 2021 Glowman554</p>
+		</footer>
+	</body>
+</html>

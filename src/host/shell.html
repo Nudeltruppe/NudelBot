@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			body {
+				color: green;
+				background-color: black;
+				font-family: Arial, Helvetica, sans-serif;
+				font-size: medium;
+			}
+			
+			.cli {
+				margin: 0 auto;
+				position: relative;
+			}
+
+			input {
+				width: 390px;
+				border: none;
+				background-color: transparent;
+				outline: none;
+				color: green;
+				font-size: medium;
+			}
+		</style>
+
+		<title id="title">TheBot - Shell</title>
+	</head>
+
+	<body>
+		<div id="cmd">
+			<div class="cli">
+				TheBot Copyright (C) 2021 Glowman554
+				<br>
+				This program comes with ABSOLUTELY NO WARRANTY
+			</div>
+			<div class="cli">
+				<br>
+			</div>
+			<div class="cli">
+				Welcome to TheBot type #help for help!
+			</div>
+			<div class="cli">
+				For the internal help use i#help!
+			</div>
+			<div class="cli">
+				<br>
+			</div>
+		</div>
+
+		<script type="module">
+			import { SocketConnection } from "./js/websocket.js";
+			
+			var current_command = 0;
+			var user_text = "";
+			var user;
+
+			var on_msg = msg => {
+				console.log(msg);
+
+				var msg_obj = JSON.parse(msg.data);
+
+				if (msg_obj.type == undefined) {
+					return;
+				}
+
+				switch (msg_obj.type) {
+				case "text":
+					msg_obj.msg = msg_obj.result.replace(/\n/g, "<br>");
+					prepend_text(msg_obj.msg);
+					break;
+
+				case "image":
+				case "sticker":
+					prepend_text("<img src=\"" + msg_obj.result + "\">");
+					break;
+
+				case "audio":
+					prepend_text("<audio src=\"" + msg_obj.result + "\" controls></audio>");
+					break;
+				
+				case "title":
+					document.getElementById("title").innerText = "TheBot - " + msg_obj.result;
+					break;
+
+				default:
+					prepend_text("Unknown message type: " + msg_obj.type);
+					break;
+				}
+			}
+
+			if (localStorage.getItem("token") == undefined) {
+				alert("Please login first!\nI will redirect you to the login page now!");
+				location.href = location.origin + "/auth.html";
+			}
+
+			window.ws = new WebSocket("ws://" + location.host);
+			window.ws.onopen = async _ => {
+				var ws = new SocketConnection("ws://" + location.host);
+				ws.initialize().then(async function (socket) {
+
+					user = await ws.socket_call("auth/info", {
+						token: localStorage.getItem("token")
+					});
+
+					user_text = `[${user.result.username}@thebot] $`;
+
+					add_new_input();
+					set_input();
+
+					ws.websocket.onclose = _ => {
+						console.log("Connection closed.");
+					};
+					ws.websocket.close();
+				});
+			}
+
+			window.ws.onclose = _ => {
+				throw new Error("The websocket did lose connection! Please use i#reconnect");
+			}
+
+			window.ws.onmessage = on_msg;
+
+			window.onerror = (msg, url, line) => {
+				var crash = `OMG something did go trebly wrong: ${msg}<br>The crash happened here: ${url} line ${line}\nConsider reporting this bug!`;
+				prepend_text(crash);
+			}
+
+			function set_input() {
+				document.getElementById("command_" + current_command).onkeypress = _ => {
+					if (_.keyCode == 13) {
+						on_input();
+					}
+				};
+				document.getElementById("command_" + current_command).focus();
+			}
+
+			function add_new_input() {
+				var new_input = document.createElement("div");
+				new_input.classList = ["cli"];
+				new_input.innerHTML = user_text + " <input type=\"text\" autocomplete=\"off\" autocapitalize=\"off\" id=\"command_" + current_command + "\">";
+				document.getElementById("cmd").appendChild(new_input);
+				set_input();
+			}
+
+			var internal_commands = {
+				"i#help": {
+					executor: text => {
+						if (text.length != 1) {
+							prepend_text("Thats not how to use this!");
+							return;
+						}
+
+						prepend_text("Internal help: i#logout, i#reconnect, i#username");
+					}
+				},
+				"i#logout": {
+					executor: text => {
+						if (text.length != 1) {
+							prepend_text("Thats not how to use this!");
+							return;
+						}
+
+						localStorage.clear();
+						location.href = location.origin + "/auth.html";
+					}
+				},
+				"i#reconnect": {
+					executor: text => {
+						if (text.length != 1) {
+							prepend_text("Thats not how to use this!");
+							return;
+						}
+
+						prepend_text("Reconnecting to websocket server...");
+
+						window.ws.onclose = _ => {
+							console.log("Connection closed.");
+						};
+						window.ws.close();
+						delete window.ws;
+
+						window.ws = new WebSocket("ws://" + location.host);
+						window.ws.onopen = async _ => {
+							prepend_text("Successfully reconnected to websocket server!");
+						}
+
+						window.ws.onclose = _ => {
+							throw new Error("The websocket did lose connection! Please use i#reconnect");
+						}
+
+						window.ws.onmessage = on_msg;
+					}
+				},
+				"i#crash": {
+					executor: text => {
+						if (text.length != 1) {
+							prepend_text("Thats not how to use this!");
+							return;
+						}
+
+						throw new Error("D:");
+					}
+				},
+				"i#username": {
+					executor: text => {
+						if (text.length != 2) {
+							prepend_text("Thats not how to use this!");
+							return;
+						}
+
+						var ws = new SocketConnection("ws://" + location.host);
+						ws.initialize().then(async function (socket) {
+
+							await ws.socket_call("auth/username", {
+								token: localStorage.getItem("token"),
+								username: text[1]
+							});
+
+							prepend_text("Successfully set username to " + text[1]);
+
+							user = await ws.socket_call("auth/info", {
+								token: localStorage.getItem("token")
+							});
+
+							user_text = `[${user.result.username}@thebot] $`;
+
+							ws.websocket.onclose = _ => {
+								console.log("Connection closed.");
+
+								document.getElementById("command_" + current_command).setAttribute("disabled", "1");
+								current_command++;
+								add_new_input();
+							};
+							ws.websocket.close();
+						});
+					}
+				}
+			}
+
+			function on_input() {
+				document.getElementById("command_" + current_command).setAttribute("disabled", "1");
+
+				var req_obj = {
+					route: "api/shell",
+					token: localStorage.getItem("token"),
+					command: document.getElementById("command_" + current_command).value
+				};
+
+				if (internal_commands[req_obj.command.split(" ")[0]] != undefined) {
+					current_command++;
+					add_new_input();
+
+					internal_commands[req_obj.command.split(" ")[0]].executor(req_obj.command.split(" "));
+
+					return;
+				}
+
+				window.ws.send(JSON.stringify(req_obj));
+
+				current_command++;
+				add_new_input();
+			}
+
+			function prepend_text(text) {
+				var new_text = document.createElement("div");
+				new_text.classList = ["cli"];
+				new_text.innerHTML = text;
+				document.getElementsByClassName("cli")[document.getElementsByClassName("cli").length - 2].append(new_text);
+				setTimeout(_ => document.getElementById("command_" + current_command).scrollIntoView(), 100);
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,56 @@
+  
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="css/style.css">
+		<script type="module" src="js/script.js" defer></script>
+
+		<title>TheBot - Changelog</title>
+	</head>
+	<body>
+		<div class="top">
+			<div class="bar black card left-align large">
+				<a href="/" class="bar-item button padding-large dark-grey hover-grey">Home</a>
+				<a href="commands.html" class="bar-item button padding-large dark-grey hover-grey">Commands</a>
+				<a href="changelog.html" class="bar-item button padding-large dark-grey hover-grey">Changelogs</a>
+				<a href="auth.html" class="bar-item button padding-large dark-grey hover-grey" id="login_button">LogIn</a>
+				<p class="bar-itme black padding-large right-align" style="margin-top: 0px;" id="login_text"></p>
+			</div>
+		</div>
+		<header class="container black center" style="padding:50px 16px">
+			<h1 class="margin jumbo">TheBot</h1>
+			<p class="xlarge">Welcome to the TheBot changelog site!</p>
+		</header>
+		<div id="commands" class="row-padding dark-grey padding-64 container">
+
+		</div>
+		<script type="module">
+			import { SocketConnection } from "./js/websocket.js";
+
+			var ws = new SocketConnection("ws://" + location.host);
+			ws.initialize().then(async function (socket) {
+				var changelogs = await ws.socket_call("changelog/all", {});
+
+				var text = "<h1>Available changelogs:</h1><ul>";
+
+				changelogs.changelogs.forEach(function (changelog) {
+					text += `<li><a href="${changelog}">${changelog.replace(".html", "")}</a></li>`;
+				});
+
+				text += "</ul>";
+
+				document.getElementById("commands").innerHTML = text;
+				
+				ws.websocket.onclose = _ => {
+					console.log("Connection closed.");
+				};
+				ws.websocket.close();
+			});
+		</script>
+		<footer class="bar black card left-align">
+			<p style="display: inline-flexbox;">Copyright (c) 2021 Glowman554</p>
+		</footer>
+	</body>
+</html>

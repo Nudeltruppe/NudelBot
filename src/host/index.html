@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="css/style.css">
+
+		<script type="module" src="js/script.js" defer></script>
+
+		<title>TheBot - Home</title>
+		<meta name="description" content="Hello im TheBot and here you can find information about me!">
+	</head>
+	<body>
+		<div class="top">
+			<div class="bar black card left-align large">
+				<a href="/" class="bar-item button padding-large dark-grey hover-grey">Home</a>
+				<a href="commands.html" class="bar-item button padding-large dark-grey hover-grey">Commands</a>
+				<a href="changelog.html" class="bar-item button padding-large dark-grey hover-grey">Changelogs</a>
+				<a href="auth.html" class="bar-item button padding-large dark-grey hover-grey" id="login_button">LogIn</a>
+				<p class="bar-itme black padding-large right-align" style="margin-top: 0px;" id="login_text"></p>
+			</div>
+		</div>
+		<header class="container black center" style="padding:50px 16px">
+			<h1 class="margin jumbo">TheBot</h1>
+			<p class="xlarge">Welcome to the TheBot website!</p>
+		</header>
+		
+		<div class="row-padding dark-grey padding-64 container">
+			<div class="content">
+				<div class="twothird">
+					<p>
+						Hello my name is TheBot and I'm happy to meet you 👍!
+						<br>
+						The person who programs me does this mainly in his free time so don't expect too much from me 🤪!
+						<br>
+						I'm mainly made to have fun 👾!
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="row-padding black padding-64 container">
+			<div class="content">
+				<div class="third center">
+					<i class="fa fa-coffee padding-64 text-red margin-right"></i>
+				</div>
+				<div class="twothird">
+					<h2>Some information:</h2>
+					<p style="display: inline;">
+						<!-- Uptime: <p style="display: inline;" id="uptime"></p>. -->
+						<!-- br -->
+						I know <p style="display: inline;" id="command-count"></p> commands.
+					</p>
+				</div>
+			</div>
+			<script type="module">
+				import { SocketConnection } from "./js/websocket.js";
+
+				var ws = new SocketConnection("ws://" + location.host);
+				ws.initialize().then(async function (socket) {
+					//var uptime = await ws.socket_call("api/uptime", {});
+					//document.getElementById("uptime").innerHTML = secondsToDhms(uptime.uptime / 1000);
+
+					var commands = await ws.socket_call("api/commands", {});
+					document.getElementById("command-count").innerHTML = commands.commands.length;
+
+					ws.websocket.onclose = _ => {
+						console.log("Connection closed.");
+					};
+					ws.websocket.close();
+				});
+
+				function secondsToDhms(seconds) {
+					let d = Math.floor(Number(seconds) / (3600 * 24));
+					let h = Math.floor(Number(seconds) % (3600 * 24) / 3600);
+					let m = Math.floor(Number(seconds) % 3600 / 60);
+					let s = Math.floor(Number(seconds) % 60);
+
+					let dDisplay = d > 0 ? d + (d == 1 ? " day, " : " days, ") : "";
+					let hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+					let mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+					let sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+					return dDisplay + hDisplay + mDisplay + sDisplay;
+				}
+			</script>
+		</div>
+		<div class="row-padding dark-grey padding-64 container">
+			<div class="content">
+				<div class="twothird">
+					<h1>About me:</h1>
+					<p>
+						Hi im Janick aka <a href="https://github.com/Glowman554">Glowman554</a> and im developing this bot mainly in my free time so don't expect too much from it 😼.
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="row-padding black padding-64 container">
+			<div class="content">
+				<div class="third center">
+					<i class="fa fa-coffee padding-64 text-red margin-right"></i>
+				</div>
+				<div class="twothird">
+					<h1>Official Discord server:</h1>
+					<p>
+						Here is the link to our Discord: <a href="https://discord.gg/Py9hv4WrGj">https://discord.gg/Py9hv4WrGj</a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="row-padding dark-grey padding-64 container">
+			<div class="content">
+				<div class="twothird">
+					<h1>Bugs:</h1>
+					<p style="display: inline;">
+						Please report bugs to Glowman554#4152 on discord.
+					</p>
+				</div>
+			</div>
+		</div>
+		<footer class="bar black card left-align">
+			<p style="display: inline-flexbox;">Copyright (c) 2021 Glowman554</p>
+		</footer>
+	</body>
+</html>
