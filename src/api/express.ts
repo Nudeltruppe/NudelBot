@@ -23,25 +23,6 @@ export function load_express_api(): void  {
 		next();
 	});
 
-	app.use(async (req, res, next) => {
-		if (req.headers.host?.includes("infinitesearch")) {
-			if (req.url.includes("acme-challenge")) { 
-				log("infinitesearch", "Time to proxy the acme-challenge request!");
-
-				var result =  await fetch("http://localhost:8888/" + req.url, {
-					headers: req.headers as HeadersInit
-				});
-
-				var text = await result.text();
-				res.send(text);
-			} else {
-				log("infinitesearch", "Time to redirect the user " + req.ip + " to https (direct connection no proxy)!");
-				res.redirect("https://" + req.headers.host + req.url);
-			}
-		} else {
-			next();
-		}
-	});
 
 	app.use(express.static(process.cwd() + "/src/host"));
 	app.use(express.json());
