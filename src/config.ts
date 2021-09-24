@@ -1,11 +1,9 @@
 import { writeFileSync } from "fs";
-import { ClientSession } from "whatsapp-web.js";
 
 export interface Config {
 	discord_token: string;
 	telegram_token: string;
 	giphy_token: string;
-	whatsapp_session: ClientSession;
 	zoom: {
 		jid: string;
 		token: string;
@@ -34,12 +32,6 @@ export function write_default_config(): void  {
 		discord_token: "",
 		giphy_token: "",
 		telegram_token: "",
-		whatsapp_session: {
-			WABrowserId: "",
-			WASecretBundle: "",
-			WAToken1: "",
-			WAToken2: ""
-		},
 		zoom: {
 			jid: "",
 			token: "",
@@ -48,7 +40,7 @@ export function write_default_config(): void  {
 		},
 		api_port: 5051,
 		url: "http://glowman554.duckdns.org/",
-		hello_msg: "Hello %user% my name is TheBot and I'm happy to meet you 👍!\nThe person who programs me does this mainly in his free time so don't expect too much from me 🤪!\nI'm mainly made to have fun 👾!\nYou can find more information about me here: %url% 😼.",
+		hello_msg: "Hello %user% my name is NudelBot and I'm happy to meet you 👍!\nThe person who programs me does this mainly in his free time so don't expect too much from me 🤪!\nI'm mainly made to have fun 👾!\nYou can find more information about me here: %url% 😼.",
 		default_perms: [],
 		version: "0.0.1",
 		users: []

@@ -6,7 +6,6 @@ import { Config } from "../../config";
 import { empty, fail, get_command_manager, get_config_cache, set_last_command_event } from "../../global";
 import { log } from "../../logger";
 import { random_id } from "../../utils";
-import { inject_crazy_bot, push_role } from "crazy-bot";
 
 export class DiscordSubsystem extends EventEmitter implements Subsystem {
 	client: Client;
@@ -43,22 +42,6 @@ export class DiscordSubsystem extends EventEmitter implements Subsystem {
 				this.client.user?.setActivity(this.status, { type: "STREAMING", url: "https://www.twitch.tv/glowman434" });
 			}, 1000 * 60);
 
-			log("discord", "Injecting crazy bot into discord client!");
-			inject_crazy_bot(this.client, "-", (get_config_cache().file_cache as Config).giphy_token);
-
-			get_command_manager().add_command(new Command("im_owner", "Tell crazy bot that you are a owner!", "Use '#im_owner' to tell crazy bot that you are a owner!", {
-				execute: async (event: CommandEvent): Promise<CommandResponse> => {
-					if (event.interface.args.length != 0) {
-						return fail;
-					}
-
-					push_role(event.interface.user, "owner");
-					return {
-						is_response: true,
-						response: "You are now a owner!"
-					};
-				}
-			} as CommandExecutor, "im_owner"));
 		});
 
 		this.client.on("message", async (msg) => {

@@ -8,37 +8,14 @@ import { check_permission, get_roles, push_role, remove_role } from "../../comma
 import { random_id, secondsToDhms } from "../../utils";
 import { Plugin } from "../plugin";
 import fetch from "node-fetch";
-import { launch } from "puppeteer";
 import { log } from "../../logger";
 import { execSync } from "child_process";
-import { WhatsAppSubsystem } from "../../subsystem/whatsapp/whatsapp";
 
 export default {
 	name: "utils",
 	version: "0.0.1",
 
 	load() {
-		get_command_manager().add_command(new Command("crash", "Crash the bot!", "Use '#crash' to crash the bot! (Admin only)", {
-			execute: async (event: CommandEvent): Promise<CommandResponse> => {
-				throw new Error("Crash!");
-			}
-		} as CommandExecutor, "crash"));
-
-		get_command_manager().add_command(new Command("eval", "Run javascript!", "Use '#eval [what]' to execute javascript!\n\nExample: \n#eval event.interface.send_message('hello');", {
-			execute: async (event: CommandEvent): Promise<CommandResponse> => {
-				if (!(!(event.interface.args.length < 1) || Boolean(event.interface.quote_text))) {
-					return fail;
-				}
-
-				var text = event.interface.quote_text ? event.interface.quote_text : event.interface.args.join(" ");
-
-				return {
-					is_response: true,
-					response: String(eval(text))
-				};
-			}
-		} as CommandExecutor, "eval"));
-
 		get_command_manager().add_command(new Command("info", "Get information from a crash id!", "Use '#info [crash_id]' to see information about a crash!\n\nExample: \n#info vX06OoCJBw", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 1) {
@@ -139,24 +116,9 @@ export default {
 
 				return {
 					is_response: true,
-					response: `TheBot@${execSync("git rev-parse --short HEAD").toString().replace("\n", "")}\n\nPlugins: ${text}`
+					response: `NudelBot@${execSync("git rev-parse --short HEAD").toString().replace("\n", "")}\n\nPlugins: ${text}`
 				};
 			}
-		} as CommandExecutor, undefined));
-
-		get_command_manager().add_command(new Command("print", "Print a text file!", "Use 'Use '#print' to print the content of the quoted file!", {
-			execute: async (event: CommandEvent): Promise<CommandResponse> => {
-				if (event.interface.files?.length == 0 && event.interface.files === undefined) {
-					return fail;
-				}
-
-				event.interface.files?.forEach((file) => {
-					event.interface.send_message("%code%" + readFileSync(file).toString() + "%code%");
-				});
-
-				return empty;
-			},
-			subsystems: ["discord", "whatsapp", "telegram"]
 		} as CommandExecutor, undefined));
 
 		get_command_manager().add_command(new Command("role", "Manage roles!", "Use '#role [list, add, remove]' to manage roles! (Admin only)\n\nExample: \n#role list @somebody\n#role add @somebody eval\n#role remove @somebody eval", {
@@ -260,61 +222,6 @@ export default {
 			subsystems: ["discord", "whatsapp", "web"]
 		} as CommandExecutor, "status"));
 
-		get_command_manager().add_command(new Command("fetch", "Fetch text from an url!", "Use '#fetch [url]' to fetch text from an url!", {
-			execute: async (event: CommandEvent): Promise<CommandResponse> => {
-				if (event.interface.args.length != 1) {
-					return fail;
-				}
-
-				let url = event.interface.args[0];
-
-				if (/^(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/gm.test(event.interface.args[0])) {
-					let response = await fetch(url);
-					let body = await response.text();
-
-					return {
-						is_response: true,
-						response: body
-					};
-				} else {
-					return fail;
-				}
-			}
-		} as CommandExecutor, undefined));
-
-		get_command_manager().add_command(new Command("screenshot", "Take a screenshot!", "Use '#screenshot [url]' to take a screenshot!", {
-			execute: async (event: CommandEvent): Promise<CommandResponse> => {
-				if (event.interface.args.length != 1) {
-					return fail;
-				}
-
-				let url = event.interface.args[0];
-
-				if (/^(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/gm.test(event.interface.args[0])) {
-					var whatsapp_subsystem = get_subsystems().find(s => s.name == "whatsapp") as WhatsAppSubsystem;
-					
-					var page = await whatsapp_subsystem.client.pupBrowser?.newPage();
-
-					if (page == undefined) {
-						return fail;
-					}
-
-					var id = random_id() + ".png";
-
-					await page.goto(url);
-					await page.screenshot({
-						path: "./tmp/" + id
-					});
-
-					await page.close();
-
-					await event.interface.send_picture_message("./tmp/" + id);
-					return empty;
-				} else {
-					return fail;
-				}
-			}
-		} as CommandExecutor, undefined));
 
 		get_command_manager().add_command(new Command("suggest", "Suggest a feature!", "Use '#suggest [feature]' to suggest a feature!", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {

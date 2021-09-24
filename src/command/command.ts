@@ -110,7 +110,7 @@ export class CommandManager {
 		if (command_event.interface.command === this.prefix + "help") {
 			switch (command_event.interface.args.length) {
 				case 0:
-					var help_message = "%italic%TheBot Help!%italic%";
+					var help_message = "%italic%NudelBot Help!%italic%";
 
 					for (var i in this.commands) {
 						if (check_permission(command_event.interface.user, this.commands[i].perm)) {

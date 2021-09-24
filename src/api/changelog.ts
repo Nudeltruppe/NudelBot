@@ -18,7 +18,7 @@ var __template = `
 		<link rel="stylesheet" href="css/style.css">
 		<script type="module" src="js/script.js" defer></script>
 
-		<title>TheBot - Changelog</title>
+		<title>NudelBot - Changelog</title>
 	</head>
 	<body>
 		<div class="top">
@@ -31,8 +31,8 @@ var __template = `
 			</div>
 		</div>
 		<header class="container black center" style="padding:50px 16px">
-			<h1 class="margin jumbo">TheBot</h1>
-			<p class="xlarge">Welcome to the TheBot changelog site!</p>
+			<h1 class="margin jumbo">NudelBot</h1>
+			<p class="xlarge">Welcome to the NudelBot changelog site!</p>
 		</header>
 		<div id="changelog" class="row-padding dark-grey padding-64 container">
 %changelog%

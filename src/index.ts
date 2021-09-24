@@ -12,12 +12,11 @@ import { log } from "./logger";
 import { load_auth_api } from "./api/authentication";
 import { WebSubsystem } from "./subsystem/web/web";
 import { TelegramSubsystem } from "./subsystem/telegram/telegram";
-import { WhatsAppSubsystem } from "./subsystem/whatsapp/whatsapp";
 import { ZoomSubsystem } from "./subsystem/zoom/zoom";
 import { compile_changelogs, load_changelog_api } from "./api/changelog";
 
 function main() {
-	log("main", "Welcome TheBot in the world of the internet!!\n\n");
+	log("main", "Welcome NudelBot in the world of the internet!!\n\n");
 
 	if (!existsSync("./config.json")) {
 		log("main", "config.json not found, creating one...");
@@ -64,17 +63,13 @@ function main() {
 	web_subsystem.load();
 	get_subsystems().push(web_subsystem);
 
-	var telegram_subsystem = new TelegramSubsystem();
-	telegram_subsystem.load();
-	get_subsystems().push(telegram_subsystem);
+	// var telegram_subsystem = new TelegramSubsystem();
+	// telegram_subsystem.load();
+	// get_subsystems().push(telegram_subsystem);
 
-	var whatsapp_subsystem = new WhatsAppSubsystem();
-	whatsapp_subsystem.load();
-	get_subsystems().push(whatsapp_subsystem);
-
-	var zoom_subsystem = new ZoomSubsystem();
-	zoom_subsystem.load();
-	get_subsystems().push(zoom_subsystem);
+	// var zoom_subsystem = new ZoomSubsystem();
+	// zoom_subsystem.load();
+	// get_subsystems().push(zoom_subsystem);
 }
 
 main();

@@ -163,7 +163,7 @@ export class ZoomSubsystem implements Subsystem {
 					"account_id": accountId,
 					"content": {
 						"head": {
-							"text": "TheBot"
+							"text": "NudelBot"
 						},
 						"body": [{
 							"type": "message",
@@ -193,7 +193,7 @@ export class ZoomSubsystem implements Subsystem {
 					"account_id": accountId,
 					"content": {
 						"head": {
-							"text": "TheBot"
+							"text": "NudelBot"
 						},
 						"body": [{
 							"type": "attachments",

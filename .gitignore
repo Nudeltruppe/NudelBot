@@ -1,0 +1,11 @@
+node_modules
+crash
+config.json
+package-lock.json
+tmp
+out
+res
+data.json
+env
+downloads
+config

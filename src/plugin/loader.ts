@@ -76,7 +76,7 @@ export class PluginLoader {
 			}
 
 			return plugin;
-		} catch (e) {
+		} catch (e: any) {
 			log("plugin", `Plugin ${name} failed to load!`);
 			log("plugin", e);
 			return null;

@@ -14,12 +14,15 @@ import { log } from "../../logger";
 import { DiscordSubsystem } from "../../subsystem/discord/discord";
 import { get_file_extension, random_id, secondsToDhms } from "../../utils";
 import { Plugin } from "../plugin";
-import { do_filter } from "./runner";
 
 function ensure_rick_roll_downloaded() {
 	if (!existsSync("./res/rick_roll.mp3")) {
 		log("fun", "Downloading rick_roll.mp3...");
-		execSync("youtube-dl -x --audio-format mp3 https://www.youtube.com/watch?v=dQw4w9WgXcQ -o ./res/rick_roll.mp3", { stdio: "inherit" });
+		try {
+			execSync("youtube-dl -x --audio-format mp3 https://www.youtube.com/watch?v=dQw4w9WgXcQ -o ./res/rick_roll.mp3", { stdio: "inherit" });
+		} catch(e: any) {
+			log("fun", "Failed to download rick_roll.mp3");
+		}
 	}
 }
 
@@ -94,107 +97,34 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("sticker", "Make a sticker from an url or picture or download telegram sticker packs!", "Use '#sticker [what]' convert a url / picture into a sticker!\nYou can send a picture yourself ot quote a message with a sticker!\n\nExample: \n#sticker https://losmejores.top/imagenes/ffmpeg.png", {
-			execute: async (event: CommandEvent): Promise<CommandResponse> => {
-				if (event.interface.args.length == 1) {
-					if (event.interface.args[0].startsWith("http")) {
-						if (event.interface.args[0].startsWith("https://t.me/addstickers")) {
-							writeFileSync("./tmp/env", (get_config_cache().file_cache as Config).telegram_token);
-							do_filter(event.interface.args[0]);
-
-							execSync("echo '" + event.interface.args[0] + "\\n\\n' | python3 -m tstickers", {
-								cwd: "./tmp/",
-								stdio: "inherit"
-							});
-
-							var name = event.interface.args[0].replace("https://t.me/addstickers/", "").toLowerCase();
-
-							readdirSync("./tmp/downloads/" + name + "/webp/").forEach(file => {
-								event.interface.send_sticker_message("./tmp/downloads/" + name + "/webp/" + file);
-							});
-
-							return empty;
-						}
-
-						var file_id = random_id() + get_file_extension(event.interface.args[0]);
-						await download(event.interface.args[0], "./tmp/", {
-							filename: file_id
-						});
-						await event.interface.send_sticker_message("./tmp/" + file_id);
-
-						return empty;
-					}
-				}
-
-				if (event.interface.files?.length != 0 && event.interface.files != undefined) {
-					await event.interface.send_sticker_message(event.interface.files[0]);
-
-					return empty;
-				}
-
-				return fail;
-			},
-			subsystems: ["whatsapp", "telegram", "web"]
-		} as CommandExecutor, undefined));
-
-		get_command_manager().add_command(new Command("youtube", "Download a youtube video!", "Use '#youtube [url]' to download a youtube video!\n\nExample: \n#youtube https://www.youtube.com/watch?v=YwlJZ91zEjo\n#youtube https://www.youtube.com/watch?v=dQw4w9WgXcQ mp3", {
-			execute: async (event: CommandEvent): Promise<CommandResponse> => {
-				if (event.interface.args.length < 1 || event.interface.args.length > 2) {
-					return fail;
-				}
-
-				if (!/^(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/gm.test(event.interface.args[0])) {
-					throw new Error("Not a valid url!");
-				} else {
-					do_filter(event.interface.args[0]);
-
-					var id = random_id();
-					await event.interface.send_message("Note: Downloading youtube videos takes some time. So please give me enough time.");
-
-
-					if (event.interface.args.length == 2 && event.interface.args[1] == "mp3") {
-						var extra_args = "-x --audio-format mp3";
-						exec(`youtube-dl ${extra_args} ` + event.interface.args[0] + " -o ./tmp/" + id + ".mp3 > ./tmp/ytdl.log", (error, stdout, stderr) => {
-							readdirSync("./tmp/").forEach(element => {
-								if (element.indexOf(id) != -1) {
-									event.interface.send_audio_message("./tmp/" + element);
-								}
-							});
-						});
-					} else {
-						exec(`youtube-dl ` + event.interface.args[0] + " -o ./tmp/" + id + ".mp4 > ./tmp/ytdl.log", (error, stdout, stderr) => {
-							//fs.writeFileSync("./tmp/" + id + ".log", error + stdout + stderr);
-				
-							readdirSync("./tmp/").forEach(element => {
-								if (element.indexOf(id) != -1) {
-									event.interface.send_message("Your video is ready: " + (get_config_cache().file_cache as Config).url + "files/" + add_host_file("./tmp/" + element));
-								}
-								//event.send_message(element);
-							});
-				
-						});
-					}
-				}
-
-				return empty;
-			}
-		} as CommandExecutor, undefined));
-
 		get_command_manager().add_command(new Command("rickroll", "Rick roll somebody!", "Use '#rickroll [chanel_id]' to rick roll somebody! (Join a voice chat in discord and use that command!)", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 1) {
 					return fail;
 				}
 
-				
-				var channel = (await (event.subsystem as DiscordSubsystem).client.channels.fetch(event.interface.args[0]));
-				if (channel.type != "voice") {
-					return fail;
-				} else {
-					var connection = await (channel as VoiceChannel).join();
-					connection.play("./res/rick_roll.mp3").on("finish", () => {
-						connection.disconnect()
+				var url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+				var channel = await ((await (event.subsystem as DiscordSubsystem).client.channels.fetch(event.interface.args[0])) as VoiceChannel).join();
+
+				if (channel) {
+					var stream = ytdl(url, { filter: "audioonly" });
+					var dispatcher = channel.play(stream, { seek: 0, volume: true });
+
+					dispatcher.on("end", () => {
+						channel?.disconnect();
 					});
+
+					(event.interface.message_raw_object as Message).react("🛑");
+					(event.interface.message_raw_object as Message).awaitReactions((reaction, user) => {
+						if (reaction._emoji.name == "🛑" && !reaction.me) {
+							dispatcher.destroy();
+							stream.destroy();
+							channel?.disconnect();
+						}
+
+						return reaction._emoji.name == "🛑" && !reaction.me;
+					});
+						
 				}
 
 				return empty;
@@ -306,20 +236,6 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("magic", "Send something magic!", "Use '#magic' to send something magic!", {
-			execute: async (event: CommandEvent): Promise<CommandResponse> => {
-				if (event.interface.args.length != 0) {
-					return fail;
-				}
-
-				return {
-					is_response: true,
-					response: `<a:thonksun_1_1:877219954041180180><a:thonksun_1_2:877219953961480212><a:thonksun_1_3:877219947246399579><a:thonksun_1_4:877219940569067622>\n<a:thonksun_2_1:877219947653267536><a:thonksun_2_2:877219952044703775><a:thonksun_2_3:877219952380239943><a:thonksun_2_4:877219949964304384>`
-				}
-			},
-
-			subsystems: ["discord"]
-		} as CommandExecutor, undefined));
 	},
 
 	reload() {

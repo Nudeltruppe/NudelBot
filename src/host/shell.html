@@ -24,13 +24,13 @@
 			}
 		</style>
 
-		<title id="title">TheBot - Shell</title>
+		<title id="title">NudelBot - Shell</title>
 	</head>
 
 	<body>
 		<div id="cmd">
 			<div class="cli">
-				TheBot Copyright (C) 2021 Glowman554
+				NudelBot Copyright (C) 2021 Glowman554
 				<br>
 				This program comes with ABSOLUTELY NO WARRANTY
 			</div>
@@ -38,7 +38,7 @@
 				<br>
 			</div>
 			<div class="cli">
-				Welcome to TheBot type #help for help!
+				Welcome to NudelBot type #help for help!
 			</div>
 			<div class="cli">
 				For the internal help use i#help!
@@ -80,7 +80,7 @@
 					break;
 				
 				case "title":
-					document.getElementById("title").innerText = "TheBot - " + msg_obj.result;
+					document.getElementById("title").innerText = "NudelBot - " + msg_obj.result;
 					break;
 
 				default:
@@ -103,7 +103,7 @@
 						token: localStorage.getItem("token")
 					});
 
-					user_text = `[${user.result.username}@thebot] $`;
+					user_text = `[${user.result.username}@NudelBot] $`;
 
 					add_new_input();
 					set_input();
@@ -223,7 +223,7 @@
 								token: localStorage.getItem("token")
 							});
 
-							user_text = `[${user.result.username}@thebot] $`;
+							user_text = `[${user.result.username}@NudelBot] $`;
 
 							ws.websocket.onclose = _ => {
 								console.log("Connection closed.");
