@@ -1,4 +1,3 @@
-import { load_auth_api } from "../../api/authentication";
 import { Command, CommandEvent, CommandResponse } from "../../command/command";
 import { get_command_manager } from "../../global";
 import { Plugin } from "../plugin";
