@@ -182,16 +182,22 @@ export default {
 	
 		get_command_manager().add_command(new Command("donate", "Donate your untis credentials.", "Use '#donate [username] [password]' to donate your untis credentials.\nKeep in mind more untis credentials from different groups and courses mean better and more accurate data.\nMake sure to donate your credentials in private", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
-				if (event.interface.args.length != 2) {
-					return fail;
-				}
+
 
 				if (event.interface.url_name != null) {
+
 					if ((event.interface.url_name).includes("@me") != true) {
 						return {
 							is_response: true,
-							response: "Please make sure to #donate in private chat for data security reasons!"
+							response: "Make sure to donate in private chat for data security reasons"
 						}
+					}
+				}
+
+				if (event.interface.args.length != 2) {
+					return {
+						is_response: true,
+						response: "No args specified"
 					}
 				}
 
