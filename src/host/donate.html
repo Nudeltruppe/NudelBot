@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="css/style.css">
+		<script type="module" src="js/script.js"></script>
+		<title>NudelBot - Donate</title>
+	</head>
+	<body>
+		<div class="top">
+			<div class="bar black card left-align large">
+				<a href="/" class="bar-item button padding-large dark-grey hover-grey">Home</a>
+				<a href="commands.html" class="bar-item button padding-large dark-grey hover-grey">Commands</a>
+				<a href="changelog.html" class="bar-item button padding-large dark-grey hover-grey">Changelogs</a>
+				<a href="auth.html" class="bar-item button padding-large dark-grey hover-grey" id="login_button">LogIn</a>
+				<p class="bar-itme black padding-large right-align" style="margin-top: 0px;" id="login_text"></p>
+			</div>
+		</div>
+		<header class="container black center" style="padding:50px 16px">
+			<h1 class="margin jumbo">NudelBot</h1>
+			<p class="xlarge">Welcome to the NudelBot donate site!</p>
+			<p class="xlarge">Here you can donate your untis login!</p>
+		</header>
+
+
+		<div id="stage0">
+			<div class="row-padding dark-grey padding-64 container">
+				<div class="content">
+					<div class="twothird">
+						<p>Username: <input style="display: inline;" type="text" id="username"></p>
+						<p>Password: <input style="display: inline;" type="password" id="password"></p>
+						<button class="button grey hover-black" id="donate">Donate</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="stage-1" style="display: none;">
+			<div class="row-padding dark-grey padding-64 container">
+				<div class="content">
+					<div class="twothird">
+						<p>Thank you for donating!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<footer class="bar black card left-align">
+			<p style="display: inline-flexbox;">Copyright (c) 2021 Glowman554</p>
+		</footer>
+
+		<script type="module">
+			import { SocketConnection } from "./js/websocket.js";
+
+			if (localStorage.getItem("token") == undefined) {
+				alert("Please login first!\nI will redirect you to the login page now!");
+				location.href = location.origin + "/auth.html";
+			}
+
+			var websocket = new SocketConnection("ws://" + location.host);
+			websocket.initialize();
+
+			document.getElementById("donate").onclick = async () => {
+				var username = document.getElementById("username").value;
+				var password = document.getElementById("password").value;
+
+				if (password == "" || username == "") {
+					alert("Please fill in all fields!");
+					return;
+				}
+
+				var res = await websocket.socket_call("untis/donate", {
+					username: username,
+					password: password,
+					token: localStorage.getItem("token")
+				});
+
+				if (res.error) {
+					alert(res.error);
+				} else {
+					document.getElementById("stage0").style.display = "none";
+					document.getElementById("stage-1").style.display = "block";
+				}
+			}
+		</script>
+	</body>
+</html>
