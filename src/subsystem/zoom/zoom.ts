@@ -61,6 +61,8 @@ export class ZoomSubsystem implements Subsystem {
 					user: payload.userJid,
 					chat_id: payload.toJid,
 
+					url_name: null,
+
 					send_message: async (msg: string): Promise<void> => {
 						if (Boolean(msg)) {
 							msg = msg.replace(/%bold%/g, "");
