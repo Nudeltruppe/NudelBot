@@ -183,10 +183,16 @@ export default {
 		get_command_manager().add_command(new Command("donate", "#donate to donate your credentials", "Make sure to donate your credentials in private", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				console.log(event.interface.url_name)
-				if (event.interface.args.length != 2 || (event.interface.url_name).includes("@me") != true) {
+				if ((event.interface.url_name).includes("@me") != true) {
 					return {
 						is_response: true,
-						response: "Please make sure to #donate in private chat for data security reasons!"
+						response: "Make sure to donate in private chat for data security reasons"
+					}
+				}
+				else if (event.interface.args.length != 2) {
+					return {
+						is_response: true,
+						response: "No args specified"
 					}
 				}
 
