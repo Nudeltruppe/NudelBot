@@ -15,24 +15,11 @@ import { DiscordSubsystem } from "../../subsystem/discord/discord";
 import { get_file_extension, random_id, secondsToDhms } from "../../utils";
 import { Plugin } from "../plugin";
 
-function ensure_rick_roll_downloaded() {
-	if (!existsSync("./res/rick_roll.mp3")) {
-		log("fun", "Downloading rick_roll.mp3...");
-		try {
-			execSync("youtube-dl -x --audio-format mp3 https://www.youtube.com/watch?v=dQw4w9WgXcQ -o ./res/rick_roll.mp3", { stdio: "inherit" });
-		} catch(e: any) {
-			log("fun", "Failed to download rick_roll.mp3");
-		}
-	}
-}
-
 export default {
 	name: "fun",
 	version: "0.0.1",
 
 	load() {
-		ensure_rick_roll_downloaded();
-
 		get_command_manager().add_command(new Command("coinflip", "Flip a coin!", "Use '#coinflip' to flip a coin!", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 0) {
