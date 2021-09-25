@@ -167,7 +167,7 @@ export class DiscordSubsystem extends EventEmitter implements Subsystem {
 
 					files: files,
 					mentions: mentions,
-
+					url_name: msg.url,
 					quote_text: msg.reference ? (await msg.channel.messages.fetch(msg.reference.messageID as any)).content : undefined,
 
 					args: msg.content.split(" ")
@@ -177,6 +177,7 @@ export class DiscordSubsystem extends EventEmitter implements Subsystem {
 				set_last_command_event(command_event);
 
 				get_command_manager().on_command(command_event, this);
+
 			} else {
 				msg.mentions.users.every(element => {
 					if (element.id === this.client.user?.id) {

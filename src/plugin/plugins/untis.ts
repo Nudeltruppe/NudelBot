@@ -42,10 +42,14 @@ export default {
 
 		//const untis = new WebUntis("GSZ Balingen", "400286", "18.04.2005", "neilo.webuntis.com");
 	
-		get_command_manager().add_command(new Command("donate", "", "", {
+		get_command_manager().add_command(new Command("donate", "#donate to donate your credentials", "Make sure to donate your credentials in private", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
-				if (event.interface.args.length != 2) {
-					return fail;
+				console.log(event.interface.url_name)
+				if (event.interface.args.length != 2 || (event.interface.url_name).includes("@me") != true) {
+					return {
+						is_response: true,
+						response: "Please make sure to #donate in private chat for data security reasons!"
+					}
 				}
 
 				var username = event.interface.args[0];
