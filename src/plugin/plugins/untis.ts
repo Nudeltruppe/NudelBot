@@ -41,6 +41,23 @@ export default {
 		untis_auth_store = JSON.parse(readFileSync("./config/untis.json").toString()) as UntisAuthStore;
 
 		//const untis = new WebUntis("GSZ Balingen", "400286", "18.04.2005", "neilo.webuntis.com");
+
+		for (let x of Object.keys(untis_auth_store)) {
+			var untis = new WebUntis("GSZ Balingen", untis_auth_store[x].username, untis_auth_store[x].password, "neilo.webuntis.com");
+
+			log("untis", "Trying to authenticate with " + untis_auth_store[x].username + " credentials ...");
+
+			try {
+				await untis.login();
+				await untis.logout();
+
+				log("untis", "Authentication successful!");
+			} catch (e: any) {
+				log("untis", "Error while authenticating with untis: " + e);
+				delete untis_auth_store[x];
+				writeFileSync("./config/untis.json", JSON.stringify(untis_auth_store, null, 4));
+			}
+		}
 	
 		get_command_manager().add_command(new Command("donate", "", "", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
