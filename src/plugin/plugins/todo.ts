@@ -22,7 +22,7 @@ export default {
 			writeFileSync("./config/todo.json", JSON.stringify(todo, null, 4));
 		}
 
-		get_command_manager().add_command(new Command("todo", "Manage your todo list!", "Use '#todo [add, remove, clear, list]' to manage your todo list!\n\nExample: \n#todo add something\n#todo remove 0\n#todo clear\n#todo list", "#todo add test",{
+		get_command_manager().add_command(new Command("todo", "Manage your todo list!", "Use '#todo [add, remove, clear, list]' to manage your todo list!\n\nExample: \n#todo add something\n#todo remove 0\n#todo clear\n#todo list", "todo add test",{
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length < 1) {
 					return fail;

@@ -45,7 +45,7 @@
 				commands.commands.forEach(element => {
 					let tmp = document.createElement("div");
 					tmp.setAttribute("id", "inner-cmd");
-					var text = `<h2>${element.name}</h2><h4>${element.help}</h4><p>${element.help_long.replace(/\n/g, "<br>")}</p><pre>${element.example_usage}</pre><a href="#">Try it yourself!</a><i>${element.perm ? "Note: This commands needs higher permissions.<br>This commands requires: " + element.perm + "<br>" : ""}</i><br><i>${element.executor.subsystems ? "Note: This command only works on some platform's.<br>This commands works on: " + element.executor.subsystems.join(", ") + "<br>" : ""}</i><br>`;
+					var text = `<h2>${element.name}</h2><h4>${element.help}</h4><p>${element.help_long.replace(/\n/g, "<br>")}</p><pre>#${element.example_usage}</pre><a href="#">Try it yourself!</a><i>${element.perm ? "Note: This commands needs higher permissions.<br>This commands requires: " + element.perm + "<br>" : ""}</i><br><i>${element.executor.subsystems ? "Note: This command only works on some platform's.<br>This commands works on: " + element.executor.subsystems.join(", ") + "<br>" : ""}</i><br>`;
 					tmp.innerHTML = side ? left.replace("%text%", text) : right.replace("%text%", text);
 					side = !side;
 					commands_div.appendChild(tmp);

@@ -25,7 +25,7 @@ export default {
 	version: "0.0.1",
 
 	load() {
-		get_command_manager().add_command(new Command("meme", "See memes!", "Use '#meme [count?]' to see memes!", "#meme 5",{
+		get_command_manager().add_command(new Command("meme", "See memes!", "Use '#meme [count?]' to see memes!", "meme 5",{
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 1) {
 					if (event.interface.args.length == 0) {

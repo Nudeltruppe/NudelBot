@@ -120,7 +120,7 @@ export function load_auth_api(): void  {
 		}
 	} as WsRoute);
 
-	get_command_manager().add_command(new Command("auth", "Authenticate on the website!", "Use '#auth [id]' to authenticate on the website", "#auth 4985hg",{
+	get_command_manager().add_command(new Command("auth", "Authenticate on the website!", "Use '#auth [id]' to authenticate on the website", "auth 4985hg",{
 		execute: async (event: CommandEvent): Promise<CommandResponse> => {
 			if (event.interface.args.length != 1) {
 				return fail;

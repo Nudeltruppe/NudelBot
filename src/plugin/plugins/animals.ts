@@ -13,7 +13,7 @@ export default {
 	version: "0.0.1",
 
 	load() {
-		get_command_manager().add_command(new Command("cat", "Cuteness awaits!", "Use '#cat' to see a cute cat!", "#cat", {
+		get_command_manager().add_command(new Command("cat", "Cuteness awaits!", "Use '#cat' to see a cute cat!", "cat", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 0) {
 					return fail;
@@ -35,7 +35,7 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("dog", "Cuteness awaits!", "Use '#dog' to see a cute dog!", "#dog", {
+		get_command_manager().add_command(new Command("dog", "Cuteness awaits!", "Use '#dog' to see a cute dog!", "dog", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 0) {
 					return fail;
@@ -59,7 +59,7 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("fox", "Cuteness awaits!", "Use '#fox' to see a cute fox!", "#fox", {
+		get_command_manager().add_command(new Command("fox", "Cuteness awaits!", "Use '#fox' to see a cute fox!", "fox", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 0) {
 					return fail;
@@ -83,7 +83,7 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("furry", "See something furry related!", "Use '#furry [what?/list?]' to see something furry related!\n\nExample: \n#furry hug", "#furry hug", {
+		get_command_manager().add_command(new Command("furry", "See something furry related!", "Use '#furry [what?/list?]' to see something furry related!\n\nExample: \n#furry hug", "furry hug", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 1) {
 					if (event.interface.args.length == 0) {
@@ -146,7 +146,7 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("yiff", "See yiff!", "Use '#yiff [what?/list?]' to see yiff!", "#yiff", {
+		get_command_manager().add_command(new Command("yiff", "See yiff!", "Use '#yiff [what?/list?]' to see yiff!", "yiff", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 1) {
 					if (event.interface.args.length == 0) {

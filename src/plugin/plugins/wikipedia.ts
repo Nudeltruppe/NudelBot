@@ -61,7 +61,7 @@ export default {
 	version: "0.0.1",
 
 	load() {
-		get_command_manager().add_command(new Command("wikipedia", "Search wikipedia!", "Use '#wikipedia [what]' to search wikipedia!\n\nExample: \n#wikipedia minecraft", "#wikipedia CPU", {
+		get_command_manager().add_command(new Command("wikipedia", "Search wikipedia!", "Use '#wikipedia [what]' to search wikipedia!\n\nExample: \n#wikipedia minecraft", "wikipedia CPU", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length < 1) {
 					return fail;
