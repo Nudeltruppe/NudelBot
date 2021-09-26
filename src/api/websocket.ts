@@ -24,6 +24,10 @@ interface WsCommands extends WsMessage {
 	commands: Command[];
 }
 
+interface WsCommandPrefix extends WsMessage {
+	prefix: string;
+}
+
 var routes: WsRoute[] = [];
 
 export function load_websocket_api(): void  {
@@ -84,6 +88,14 @@ export function load_websocket_api(): void  {
 		route: "api/commands",
 		executer: function(message: WsCommands, socket: WebSocket) {
 			message.commands = get_command_manager().commands;
+			return Promise.resolve(message);
+		}
+	} as WsRoute);
+
+	add_route({
+		route: "api/prefix",
+		executer: function(message: WsCommandPrefix, socket: WebSocket) {
+			message.prefix = get_command_manager().prefix;
 			return Promise.resolve(message);
 		}
 	} as WsRoute);

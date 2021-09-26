@@ -108,6 +108,24 @@
 					add_new_input();
 					set_input();
 
+					const params = new URLSearchParams(window.location.search);
+					const autoexec = params.get("autoexec");
+
+					if (autoexec != null) {
+						var cmds = autoexec.split(";");
+
+						for (var i = 0; i < cmds.length; i++) {
+							if (cmds[i] == "") {
+								continue;
+							} else {
+								var prefix = await ws.socket_call("api/prefix", {});
+
+								document.getElementById("command_" + current_command).value = prefix.prefix + cmds[i];
+								on_input();
+							}
+						}
+					}
+
 					ws.websocket.onclose = _ => {
 						console.log("Connection closed.");
 					};
