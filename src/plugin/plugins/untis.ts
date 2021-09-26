@@ -161,6 +161,11 @@ export default {
 			subsystem = get_subsystems().find(subsystem => subsystem.name == "discord") as DiscordSubsystem;
 		}
 
+		while (!subsystem.init_done) {
+			log("untis", "Discord not ready yet, waiting ...");
+			await new Promise(resolve => setTimeout(resolve, 1000));
+		}
+
 		if (untis_config.channel != "" && untis_config.message == "") {
 			channel = await subsystem.client.channels.fetch(untis_config.channel) as TextChannel;
 			message = await channel.send("test");

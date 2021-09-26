@@ -11,6 +11,7 @@ export class DiscordSubsystem extends EventEmitter implements Subsystem {
 	client: Client;
 	status_timer: NodeJS.Timer|undefined;
 	name = "discord";
+	init_done = false;
 
 	status = `${get_command_manager().prefix}help`;
 
@@ -41,6 +42,8 @@ export class DiscordSubsystem extends EventEmitter implements Subsystem {
 				log("discord", "Updating status...");
 				this.client.user?.setActivity(this.status, { type: "STREAMING", url: "https://www.twitch.tv/glowman434" });
 			}, 1000 * 60);
+
+			this.init_done = true;
 
 		});
 
