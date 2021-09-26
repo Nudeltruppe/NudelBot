@@ -16,7 +16,7 @@ export default {
 	version: "0.0.1",
 
 	load() {
-		get_command_manager().add_command(new Command("info", "Get information from a crash id!", "Use '#info [crash_id]' to see information about a crash!\n\nExample: \n#info vX06OoCJBw", {
+		get_command_manager().add_command(new Command("info", "Get information from a crash id!", "Use '#info [crash_id]' to see information about a crash!\n\nExample: \n#info vX06OoCJBw", "#info sdjghjd5793", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 1) {
 					return fail;
@@ -42,7 +42,7 @@ export default {
 		} as CommandExecutor, "crash"));
 
 		
-		get_command_manager().add_command(new Command("load", "Load a plugin!", "Use #load [plugin] to load the plugin!", {
+		get_command_manager().add_command(new Command("load", "Load a plugin!", "Use #load [plugin] to load the plugin!", "#load test_plug", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 1) {
 					return fail;
@@ -61,7 +61,7 @@ export default {
 			}
 		} as CommandExecutor, "plugin"));
 
-		get_command_manager().add_command(new Command("ping", "Ping the bot!", "Use '#ping' to ping the bot!", {
+		get_command_manager().add_command(new Command("ping", "Ping the bot!", "Use '#ping' to ping the bot!", "#ping",{
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 0) {
 					return fail;
@@ -74,7 +74,7 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("say", "Say something!", "Use '#say [what]' to say something!\n\nExample: \n#say Hello world", {
+		get_command_manager().add_command(new Command("say", "Say something!", "Use '#say [what]' to say something!\n\nExample: \n#say Hello world", "#say Hello!", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (!(!(event.interface.args.length < 1) || Boolean(event.interface.quote_text))) {
 					return fail;
@@ -102,7 +102,7 @@ export default {
 			}
 		} as CommandExecutor, undefined));*/
 
-		get_command_manager().add_command(new Command("version", "Get the bot version!", "Use '#version' to get the bot version!", {
+		get_command_manager().add_command(new Command("version", "Get the bot version!", "Use '#version' to get the bot version!", "#version",{
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 0) {
 					return fail;
@@ -121,7 +121,7 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("role", "Manage roles!", "Use '#role [list, add, remove]' to manage roles! (Admin only)\n\nExample: \n#role list @somebody\n#role add @somebody eval\n#role remove @somebody eval", {
+		get_command_manager().add_command(new Command("role", "Manage roles!", "Use '#role [list, add, remove]' to manage roles! (Admin only)\n\nExample: \n#role list @somebody\n#role add @somebody eval\n#role remove @somebody eval", "#role add @somebody", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length < 2) {
 					return fail;
@@ -190,7 +190,7 @@ export default {
 			}
 		} as CommandExecutor, "role"));
 
-		get_command_manager().add_command(new Command("status", "Set the bot status!", "Use '#status [what]' to set the bot status!", {
+		get_command_manager().add_command(new Command("status", "Set the bot status!", "Use '#status [what]' to set the bot status!", "#status playing #help",{
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length < 1) {
 					return fail;
@@ -206,7 +206,7 @@ export default {
 			subsystems: ["discord", "whatsapp", "web"]
 		} as CommandExecutor, "status"));
 
-		get_command_manager().add_command(new Command("reset-status", "Reset the bot status!", "Use '#reset-status' to reset the bot status to the default!", {
+		get_command_manager().add_command(new Command("reset-status", "Reset the bot status!", "Use '#reset-status' to reset the bot status to the default!", "#reset-status", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 0) {
 					return fail;
@@ -223,7 +223,7 @@ export default {
 		} as CommandExecutor, "status"));
 
 
-		get_command_manager().add_command(new Command("suggest", "Suggest a feature!", "Use '#suggest [feature]' to suggest a feature!", {
+		get_command_manager().add_command(new Command("suggest", "Suggest a feature!", "Use '#suggest [feature]' to suggest a feature!", "#suggest test-feature", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length < 1) {
 					return fail;
@@ -238,7 +238,7 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("im_18", "Say that you are 18+!", "Use '#im_18' to set your age to 18+!", {
+		get_command_manager().add_command(new Command("im_18", "Say that you are 18+!", "Use '#im_18' to set your age to 18+!", "#im_18", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 0) {
 					return fail;

@@ -57,7 +57,7 @@ export default {
 	version: "0.0.1",
 
 	load() {
-		get_command_manager().add_command(new Command("corona", "Get information about the current COVID 19 cases!", "Use '#corona [country]' to see information about the current cases!\n\nExample: \n#corona germany", {
+		get_command_manager().add_command(new Command("corona", "Get information about the current COVID 19 cases!", "Use '#corona [country]' to see information about the current cases!\n\nExample: \n#corona germany", "#corona germany", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 1) {
 					return fail;

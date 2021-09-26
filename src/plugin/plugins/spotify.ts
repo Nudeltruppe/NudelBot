@@ -212,7 +212,7 @@ export default {
 				});
 			}, 1000 * 60);
 
-			get_command_manager().add_command(new Command("spotify", "Search spotify for songs!", "Use '#spotify [what]' to get a list of songs and small previews of them!\n\nExample: \n#spotify don't hide", {
+			get_command_manager().add_command(new Command("spotify", "Search spotify for songs!", "Use '#spotify [what]' to get a list of songs and small previews of them!\n\nExample: \n#spotify don't hide", "#spotify never gonna give you up", {
 				execute: async (event: CommandEvent): Promise<CommandResponse> => {
 					if (event.interface.args.length  < 1) {
 						return fail;

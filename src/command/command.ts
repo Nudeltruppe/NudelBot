@@ -15,13 +15,15 @@ export class Command {
 	name: string;
 	help: string;
 	help_long: string|undefined;
+	example_usage: string|undefined;
 	executor: CommandExecutor;
 	perm: string|undefined;
 
-	constructor(name: string, help: string, help_long: string|undefined, executor: CommandExecutor, perm: string|undefined) {
+	constructor(name: string, help: string, help_long: string|undefined, example_usage:string|undefined, executor: CommandExecutor, perm: string|undefined) {
 		this.name = name;
 		this.help = help;
 		this.help_long = help_long;
+		this.example_usage = example_usage;
 		this.executor = executor;
 		this.perm = perm;
 	}

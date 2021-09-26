@@ -20,7 +20,7 @@ export default {
 	version: "0.0.1",
 
 	load() {
-		get_command_manager().add_command(new Command("coinflip", "Flip a coin!", "Use '#coinflip' to flip a coin!", {
+		get_command_manager().add_command(new Command("coinflip", "Flip a coin!", "Use '#coinflip' to flip a coin!", "#coinflip", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 0) {
 					return fail;
@@ -35,7 +35,7 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("commit", "Get a random commit message!", "Use '#commit' to get a random commit message!", {
+		get_command_manager().add_command(new Command("commit", "Get a random commit message!", "Use '#commit' to get a random commit message!", "#commit", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 0) {
 					return fail;
@@ -50,7 +50,7 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("fact", "Get a useless fact!", "Use '#fact' to get a random and useless fact!", {
+		get_command_manager().add_command(new Command("fact", "Get a useless fact!", "Use '#fact' to get a random and useless fact!", "#fact", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 0) {
 					return fail;
@@ -65,7 +65,7 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("joke", "Get a joke!", "Use '#joke' to get a bad joke!", {
+		get_command_manager().add_command(new Command("joke", "Get a joke!", "Use '#joke' to get a bad joke!", "#joke", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 0) {
 					return fail;
@@ -84,7 +84,7 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("rickroll", "Rick roll somebody!", "Use '#rickroll [chanel_id]' to rick roll somebody! (Join a voice chat in discord and use that command!)", {
+		get_command_manager().add_command(new Command("rickroll", "Rick roll somebody!", "Use '#rickroll [chanel_id]' to rick roll somebody! (Join a voice chat in discord and use that command!)", "#rickroll test", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 1) {
 					return fail;
@@ -120,7 +120,7 @@ export default {
 			subsystems: ["discord"]
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("play", "Play a a youtube video in a vc!", "Use '#play [url]' to play a youtube video in a vc!", {
+		get_command_manager().add_command(new Command("play", "Play a a youtube video in a vc!", "Use '#play [url]' to play a youtube video in a vc!", "#play https://www.youtube.com/watch?v=dQw4w9WgXcQ", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 1) {
 					return fail;
@@ -168,7 +168,7 @@ export default {
 			subsystems: ["discord"]
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("year", "See how much of this year is left!", "Use '#year' to see how much of this year is left!", {
+		get_command_manager().add_command(new Command("year", "See how much of this year is left!", "Use '#year' to see how much of this year is left!", "#year", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 0) {
 					return fail;
@@ -187,7 +187,7 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("nick", "Set the bot nickname!", "Use '#nick [what]' to set the bot nickname!", {
+		get_command_manager().add_command(new Command("nick", "Set the bot nickname!", "Use '#nick [what]' to set the bot nickname!", "#nick NudelBot", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length < 1) {
 					return fail;
@@ -202,7 +202,7 @@ export default {
 			}
 		} as CommandExecutor, "nick"));
 
-		get_command_manager().add_command(new Command("tts", "Send a tts message!", "Use '#tts [what]' to send a tts message!", {
+		get_command_manager().add_command(new Command("tts", "Send a tts message!", "Use '#tts [what]' to send a tts message!", "#tts hey", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (!(!(event.interface.args.length < 1) || Boolean(event.interface.quote_text))) {
 					return fail;

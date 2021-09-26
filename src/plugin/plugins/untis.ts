@@ -180,7 +180,7 @@ export default {
 			message.edit(await fetch_homework());
 		}, 1000 * 60 * 60);
 	
-		get_command_manager().add_command(new Command("donate", "Donate your untis credentials.", "Use '#donate [username] [password]' to donate your untis credentials.\nKeep in mind more untis credentials from different groups and courses mean better and more accurate data.\nMake sure to donate your credentials in private", {
+		get_command_manager().add_command(new Command("donate", "Donate your untis credentials.", "Use '#donate [username] [password]' to donate your untis credentials.\nKeep in mind more untis credentials from different groups and courses mean better and more accurate data.\nMake sure to donate your credentials in private", "#donate 000000 11.11.1111", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 
 

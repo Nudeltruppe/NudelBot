@@ -26,14 +26,7 @@
 		</header>
 		<!--The command section-->
 		<div id="commands">
-			<!--Donate-->
-			<div id="inner-cmd">
-				<h2>Donate</h2>
-				<h4>Use #donate in a private chat with the Bot to donate your Untis data!</h4>
-				<p>Donate is a plugins inside the untis plugins that allows you to donate your untis login data which is required at least from one person to make the untis plugins work.<br>Use<pre>#donate [login_name] [password]</pre> in private chat with the bot and you should get <pre>Thanks for donating!</pre>
-				If you get an error message like: <pre>Make sure to donate in private chat for data security reasons</pre>Try to use donate in the private chat with the bot.</p>
-				<img src="./sprites/screenshot-donate-cmd.png">
-			</div>
+			
 		</div>
 		<script type="module">
 			import { SocketConnection } from "./js/websocket.js";
@@ -42,8 +35,8 @@
 			ws.initialize().then(async function (socket) {
 				var commands = await ws.socket_call("api/commands", {});
 
-				var left = "<div class=\"row-padding dark-grey padding-64 container\"><div class=\"content\"><div class=\"twothird\"><p>%text%</p></div></div></div>";
-				var right = "<div class=\"row-padding black padding-64 container\"><div class=\"content\"><div class=\"third center\"><i class=\"fa fa-coffee padding-64 text-red margin-right\"></i></div><div class=\"twothird\"><p>%text%</p></div></div></div>";
+				var left = "<div class=\"row-padding dark-grey padding 30 container\"><div class=\"content\"><div class=\"twothird\"><p>%text%</p></div></div></div>";
+				var right = "<div class=\"row-padding dark-grey padding 30 container\"><div class=\"content\"><div class=\"third center\"><i class=\"fa fa-coffee text-red padding-64 margin-right\"></i></div><div class=\"twothird\"><p>%text%</p></div></div></div>";
 
 				let commands_div = document.getElementById("commands");
 
@@ -51,7 +44,8 @@
 
 				commands.commands.forEach(element => {
 					let tmp = document.createElement("div");
-					var text = `<h2><big>${element.name}</big></h2><p><code>${element.help_long.replace(/\n/g, "<br>")}</code></p><i>${element.perm ? "Note: This commands needs higher permissions.<br>This commands requires: " + element.perm + "<br>" : ""}</i><br><i>${element.executor.subsystems ? "Note: This command only works on some platform's.<br>This commands works on: " + element.executor.subsystems.join(", ") + "<br>" : ""}</i><br>`;
+					tmp.setAttribute("id", "inner-cmd");
+					var text = `<h2>${element.name}</h2><h4>${element.help}</h4><p>${element.help_long.replace(/\n/g, "<br>")}</p><pre>${element.example_usage}</pre><a href="#">Try it yourself!</a><i>${element.perm ? "Note: This commands needs higher permissions.<br>This commands requires: " + element.perm + "<br>" : ""}</i><br><i>${element.executor.subsystems ? "Note: This command only works on some platform's.<br>This commands works on: " + element.executor.subsystems.join(", ") + "<br>" : ""}</i><br>`;
 					tmp.innerHTML = side ? left.replace("%text%", text) : right.replace("%text%", text);
 					side = !side;
 					commands_div.appendChild(tmp);
