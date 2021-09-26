@@ -1383,10 +1383,14 @@ a{
     border-color:#e7ffff!important
 }
 
+#nudel-bot-home {
+    text-decoration: none;
+}
+
 /* The style for the command section*/
 #inner-cmd {
-    margin: 1rem;
-    padding: 0.5rem;
+    margin: 5rem;
+    padding: 1rem;
     border-left-width: 2px;
     border-left-color: lightgray;
     border-left-style: solid;
