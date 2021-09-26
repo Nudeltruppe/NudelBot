@@ -1,4 +1,4 @@
-import { readFileSync } from "fs";
+import { readdirSync, readFileSync, rmSync } from "fs";
 import { existsSync } from "node:fs";
 import { Command, CommandEvent, CommandExecutor, CommandResponse } from "../../command/command";
 import { Config } from "../../config";
@@ -256,6 +256,25 @@ export default {
 				};
 			}
 		} as CommandExecutor, undefined));
+
+		get_command_manager().add_command(new Command("clear_tmp", "Clear the temporary files!", "Use '#clear_tmp' to clear the temporary files!", "clear_tmp", {
+			execute: async (event: CommandEvent): Promise<CommandResponse> => {
+				if (event.interface.args.length != 0) {
+					return fail;
+				}
+
+				var dir = readdirSync("./tmp");
+				dir.forEach(element => {
+					log("utils", "Deleting element: " + element + "!");
+					rmSync("./tmp/" + element, { recursive: true });
+				});
+
+				return {
+					is_response: true,
+					response: "Successfully cleared the temporary files!"
+				};
+			}
+		} as CommandExecutor, "clear"));
 	},
 
 
