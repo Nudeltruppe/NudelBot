@@ -170,7 +170,6 @@ export class DiscordSubsystem extends EventEmitter implements Subsystem {
 
 					files: files,
 					mentions: mentions,
-					url_name: msg.url,
 					quote_text: msg.reference ? (await msg.channel.messages.fetch(msg.reference.messageID as any)).content : undefined,
 
 					args: msg.content.split(" ")
