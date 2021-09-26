@@ -43,15 +43,30 @@
 
 				//var side = true;
 
-				commands.commands.forEach(element => {
+				for (let element of commands.commands) {
 					let tmp = document.createElement("div");
 					tmp.setAttribute("id", "inner-cmd");
 					var command = element.example_usage.split(" ")[0];
 					var args = element.example_usage.split(" ")[1];
-					var text = `<h2>${element.name}</h2><h4>${element.help}</h4><p>${element.help_long.replace(/\n/g, "<br>")}</p><pre>#${element.example_usage}</pre><a ${element.executor.subsystems ? (element.executor.subsystems.indexOf("web") != -1 ? "" : "style=\"display: none\"") : ""}href="http://localhost:5051/shell.html?autoexec=${command} ${args ? args : ""}">Try it yourself!</a><i>${element.perm ? "Note: This commands needs higher permissions.<br>This commands requires: " + element.perm + "<br>" : ""}</i><br><i>${element.executor.subsystems ? "Note: This command only works on some platform's.<br>This commands works on: " + element.executor.subsystems.join(", ") + "<br>" : ""}</i><br>`;
+
+					var is_allowed = !Boolean(element.perm);
+
+					if (!is_allowed) {
+						if (localStorage.getItem("token") != null) {
+							var perms = await ws.socket_call("auth/perms", {
+								token: localStorage.getItem("token")
+							});
+
+							if (perms.permissions.includes(element.perm)) {
+								is_allowed = true;
+							}
+						}
+					}
+
+					var text = `<h2>${element.name}</h2><h4>${element.help}</h4><p>${element.help_long.replace(/\n/g, "<br>")}</p><pre>#${element.example_usage}</pre><a ${is_allowed ? "" : "style=\"display: none\""}${element.executor.subsystems ? (element.executor.subsystems.indexOf("web") != -1 ? "" : "style=\"display: none\"") : ""}href="http://localhost:5051/shell.html?autoexec=${command} ${args ? args : ""}">Try it yourself!</a><br><i>${element.perm ? "Note: This commands needs higher permissions.<br>This commands requires: " + element.perm + "<br>" : ""}</i><br><i>${element.executor.subsystems ? "Note: This command only works on some platform's.<br>This commands works on: " + element.executor.subsystems.join(", ") + "<br>" : ""}</i><br>`;
 					tmp.innerHTML = text;
 					commands_div.appendChild(tmp);
-				});
+				}
 
 				ws.websocket.onclose = _ => {
 					console.log("Connection closed.");
