@@ -190,15 +190,16 @@ export default {
 
 
 				if (event.interface.url_name != null) {
-					if ((event.interface.message_raw_object as any).channel) {
-						try {
-							(event.interface.message_raw_object as Message).delete();
-						} catch (e: any) {
-							log("untis", "Error while deleting message: " + e);
-						}
-					}
 
 					if ((event.interface.url_name).includes("@me") != true) {
+						if ((event.interface.message_raw_object as any).channel) {
+							try {
+								(event.interface.message_raw_object as Message).delete();
+							} catch (e: any) {
+								log("untis", "Error while deleting message: " + e);
+							}
+						}
+						
 						return {
 							is_response: true,
 							response: "Make sure to donate in private chat for data security reasons"
