@@ -1385,8 +1385,8 @@ a{
 
 /* The style for the command section*/
 #inner-cmd {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    margin: 1rem;
+    padding: 0.5rem;
     border-left-width: 2px;
     border-left-color: lightgray;
     border-left-style: solid;
