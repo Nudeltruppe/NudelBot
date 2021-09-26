@@ -8,7 +8,6 @@ import { empty, fail, get_command_manager, user_agent } from "../../global";
 import { get_file_extension, random_id } from "../../utils";
 import { Plugin } from "../plugin";
 
-
 export default {
 	name: "animals",
 	version: "0.0.1",
@@ -19,9 +18,14 @@ export default {
 				if (event.interface.args.length != 0) {
 					return fail;
 				}
-				
-				var file_id = random_id() + ".png";
-				await download("https://cataas.com/cat", "./tmp/", {
+
+				var cat = await (await fetch("https://aws.random.cat/meow")).json() as {
+					file: string;
+				};
+
+				var file_id = random_id() + get_file_extension(cat.file);
+
+				await download(cat.file, "./tmp/", {
 					filename: file_id
 				});
 
