@@ -45,8 +45,6 @@ export class WebSubsystem implements Subsystem {
 					user: lookup_token(message.token).user,
 					chat_id: lookup_token(message.token).user,
 					
-					url_name: "@me",					
-
 					async send_message(msg: string): Promise<void> {
 						if (Boolean(message)) {
 							msg = msg.replace(/%bold%/g, "");

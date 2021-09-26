@@ -32,7 +32,6 @@ export class Command {
 export interface CommandEventInterface {
 	message: string;
 	command: string;
-	url_name: string|null,
 	user: string;
 	chat_id: string;
 

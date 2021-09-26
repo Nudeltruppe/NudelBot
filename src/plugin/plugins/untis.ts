@@ -189,9 +189,8 @@ export default {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 
 
-				if (event.interface.url_name != null) {
-
-					if ((event.interface.url_name).includes("@me") != true) {
+				if ((event.interface.message_raw_object as any).channel) {
+					if ((event.interface.message_raw_object as Message).channel.type != "dm") {
 						if ((event.interface.message_raw_object as any).channel) {
 							try {
 								(event.interface.message_raw_object as Message).delete();
@@ -199,7 +198,7 @@ export default {
 								log("untis", "Error while deleting message: " + e);
 							}
 						}
-						
+
 						return {
 							is_response: true,
 							response: "Make sure to donate in private chat for data security reasons"

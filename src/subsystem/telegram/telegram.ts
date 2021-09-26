@@ -305,7 +305,6 @@ export class TelegramSubsystem implements Subsystem {
 					user: ctx.from.username ? "@" + ctx.from.username : ctx.from.id.toString(),
 					chat_id: ctx.message.chat.id.toString(),
 
-					url_name: ctx.message.chat.type == "private" ? "@me" : ctx.message.chat.title,
 
 					async send_message(msg: string): Promise<void> {
 						if (Boolean(msg)) {
