@@ -1,0 +1,19 @@
+node_modules
+crash
+package-lock.json
+tmp
+out
+res
+data.json
+env
+downloads
+logs
+Dockerfile
+.dokcerignore
+#Mac files
+
+._*
+
+.DS_Store
+
+._DS_Strore
