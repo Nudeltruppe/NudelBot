@@ -10,7 +10,11 @@ import fetch, { HeadersInit } from "node-fetch";
 var app = express.default();
 
 export function load_express_api(): void  {
-	const port = (get_config_cache().file_cache as Config).api_port;
+	var port = (get_config_cache().file_cache as Config).api_port;
+
+	if (process.env.PORT) {
+		port = parseInt(process.env.PORT);
+	}
 	
 	app.use((req, res, next) => {
 		log("express", JSON.stringify({
