@@ -9,7 +9,7 @@ import { random_id, secondsToDhms } from "../../utils";
 import { Plugin } from "../plugin";
 import fetch from "node-fetch";
 import { log } from "../../logger";
-import { execSync } from "child_process";
+import { exec, execSync } from "child_process";
 
 export default {
 	name: "utils",
@@ -275,6 +275,20 @@ export default {
 				};
 			}
 		} as CommandExecutor, "clear"));
+
+		get_command_manager().add_command(new Command("config", "Get the config!", "Use '#config' to get the config files!", "config", {
+			execute: async (event: CommandEvent): Promise<CommandResponse> => {
+				if (event.interface.args.length != 0) {
+					return fail;
+				}
+
+				execSync("zip -r tmp/config.zip config*");
+
+				event.interface.send_picture_message("./tmp/config.zip");
+
+				return empty;
+			}
+		} as CommandExecutor, "status"));
 	},
 
 

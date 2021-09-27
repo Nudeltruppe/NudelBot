@@ -94,9 +94,9 @@
 				location.href = location.origin + "/auth.html";
 			}
 
-			window.ws = new WebSocket("ws://" + location.host);
+			window.ws = new WebSocket("wss://" + location.host);
 			window.ws.onopen = async _ => {
-				var ws = new SocketConnection("ws://" + location.host);
+				var ws = new SocketConnection("wss://" + location.host);
 				ws.initialize().then(async function (socket) {
 
 					user = await ws.socket_call("auth/info", {
@@ -198,7 +198,7 @@
 						window.ws.close();
 						delete window.ws;
 
-						window.ws = new WebSocket("ws://" + location.host);
+						window.ws = new WebSocket("wss://" + location.host);
 						window.ws.onopen = async _ => {
 							prepend_text("Successfully reconnected to websocket server!");
 						}
@@ -227,7 +227,7 @@
 							return;
 						}
 
-						var ws = new SocketConnection("ws://" + location.host);
+						var ws = new SocketConnection("wss://" + location.host);
 						ws.initialize().then(async function (socket) {
 
 							await ws.socket_call("auth/username", {

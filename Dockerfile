@@ -1,7 +1,7 @@
 FROM node:16-buster
 
 RUN apt update
-RUN apt install -y ffmpeg
+RUN apt install -y ffmpeg zip
 
 COPY . /usr/src/app
 COPY config.json /usr/src/app/config.json

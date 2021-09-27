@@ -1,6 +1,6 @@
 import { SocketConnection } from "./websocket.js";
 
-var ws = new SocketConnection("ws://" + location.host);
+var ws = new SocketConnection("wss://" + location.host);
 ws.initialize().then(async function (socket) {
 	if (localStorage.getItem("token") != undefined) {
 		var i = await ws.socket_call("auth/info", {
