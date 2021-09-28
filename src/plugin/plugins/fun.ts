@@ -223,6 +223,20 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
+		get_command_manager().add_command(new Command("thonksun", "Thonksun!", "Use '#thonksun' to thonksun!", "thonksun", {
+			execute: async (event: CommandEvent): Promise<CommandResponse> => {
+				if (event.interface.args.length != 0) {
+					return fail;
+				}
+
+				return {
+					is_response: true,
+					response: "<a:thonksun_1_1:877219954041180180><a:thonksun_1_2:877219953961480212><a:thonksun_1_3:877219947246399579><a:thonksun_1_4:877219940569067622>\n<a:thonksun_2_1:877219947653267536><a:thonksun_2_2:877219952044703775><a:thonksun_2_3:877219952380239943><a:thonksun_2_4:877219949964304384>"
+				}
+			},
+			subsystems: ["discord"]
+		} as CommandExecutor, undefined));
+
 	},
 
 	reload() {
