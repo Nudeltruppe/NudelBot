@@ -46,8 +46,9 @@
 				for (let element of commands.commands) {
 					let tmp = document.createElement("div");
 					tmp.setAttribute("id", "inner-cmd");
-					var command = element.example_usage.split(" ")[0];
-					var args = element.example_usage.split(" ")[1];
+					var tmp_split = element.example_usage.split(" ");
+					var command = tmp_split.shift();
+					var args = tmp_split.join(" ");
 
 					var is_allowed = !Boolean(element.perm);
 

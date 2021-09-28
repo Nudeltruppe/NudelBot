@@ -191,7 +191,7 @@ export default {
 			}
 		} as CommandExecutor, "role"));
 
-		get_command_manager().add_command(new Command("status", "Set the bot status!", "Use '#status [what]' to set the bot status!", "#status playing help",{
+		get_command_manager().add_command(new Command("status", "Set the bot status!", "Use '#status [what]' to set the bot status!", "status playing help",{
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length < 1) {
 					return fail;
