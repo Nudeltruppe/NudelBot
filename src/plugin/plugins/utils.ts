@@ -3,13 +3,14 @@ import { existsSync } from "node:fs";
 import { Command, CommandEvent, CommandExecutor, CommandResponse } from "../../command/command";
 import { Config } from "../../config";
 import { CrashDump } from "../../crash";
-import { empty, fail, get_command_manager, get_config_cache, get_plugin_loader, get_starttime, get_subsystems } from "../../global";
+import { empty, fail, get_command_manager, get_config_cache, get_express, get_plugin_loader, get_starttime, get_subsystems } from "../../global";
 import { check_permission, get_roles, push_role, remove_role } from "../../command/permission";
 import { random_id, secondsToDhms } from "../../utils";
 import { Plugin } from "../plugin";
 import fetch from "node-fetch";
 import { log } from "../../logger";
 import { exec, execSync } from "child_process";
+import { lookup_token } from "../../api/authentication";
 
 export default {
 	name: "utils",
@@ -289,6 +290,22 @@ export default {
 				return empty;
 			}
 		} as CommandExecutor, "status"));
+
+		get_express().get("/config.zip", (req, res) => {
+			if (!req.query.token) {
+				res.send("Invalid token!");
+				return;
+			}
+
+			if (!check_permission(lookup_token(req.query.token as string).user, "status")) {
+				res.send("Invalid token!");
+				return;
+			}
+
+			execSync("zip -r tmp/config.zip config*");
+
+			res.sendFile(process.cwd() + "/tmp/config.zip");
+		});
 	},
 
 
