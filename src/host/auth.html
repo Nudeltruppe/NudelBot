@@ -85,7 +85,7 @@
 		<script type="module">
 			import { SocketConnection } from "./js/websocket.js";
 
-			var websocket = new SocketConnection("wss://" + location.host);
+			var websocket = new SocketConnection((window.location.origin.startsWith("https://") ? "wss://" : "ws://") + location.host);
 			websocket.initialize();
 
 			function next(current) {

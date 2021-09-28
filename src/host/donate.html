@@ -58,7 +58,7 @@
 				location.href = location.origin + "/auth.html";
 			}
 
-			var websocket = new SocketConnection("wss://" + location.host);
+			var websocket = new SocketConnection((window.location.origin.startsWith("https://") ? "wss://" : "ws://") + location.host);
 			websocket.initialize();
 
 			document.getElementById("donate").onclick = async () => {

@@ -55,7 +55,7 @@
 								return;
 							}
 
-							var ws = new SocketConnection("wss://" + location.host);
+							var ws = new SocketConnection((window.location.origin.startsWith("https://") ? "wss://" : "ws://") + location.host);
 							ws.initialize().then(async function (socket) {
 								ws.socket_call("api/report", {
 									report: `${document.getElementById("type").value}: ${document.getElementById("description").value}`

@@ -5,6 +5,7 @@ import fetch from "node-fetch";
 import { Command, CommandEvent, CommandExecutor, CommandResponse } from "../../command/command";
 import { check_permission } from "../../command/permission";
 import { empty, fail, get_command_manager, user_agent } from "../../global";
+import { log } from "../../logger";
 import { get_file_extension, random_id } from "../../utils";
 import { Plugin } from "../plugin";
 
@@ -83,14 +84,24 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("furry", "See something furry related!", "Use '#furry [what?/list?]' to see something furry related!\n\nExample: \n#furry hug", "furry hug", {
+		get_command_manager().add_command(new Command("furry", "See something furry related!", "Use '#furry [what?/list?][count?]' to see something furry related!\n\nExample: \n#furry hug", "furry hug", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
+				var count = 1;
 				if (event.interface.args.length != 1) {
 					if (event.interface.args.length == 0) {
 						event.interface.args.push("fursuit");
+					} else if (event.interface.args.length == 2) {
+						count = parseInt(event.interface.args[1]);
 					} else {
 						return fail;
 					}
+				}
+
+				if (10 < count) {
+					return {
+						is_response: true,
+						response: "I see you are a furry owo still get some help!"
+					};
 				}
 
 				var known_methods: { [func: string]: (options?: Options|undefined) => APIResponse } = {
@@ -119,41 +130,58 @@ export default {
 					};
 				}
 
-				var furry = (await known_methods[event.interface.args[0]]({ agent: user_agent })) as {
-					artists: string[];
-					sources: string[];
-					width: number;
-					height: number;
-					url: string;
-					type: string;
-					name: string;
-					id: string;
-					shortURL: string;
-					ext: string;
-					size: number;
-					reportURL: string;
-				};
+				for (let i = 0; i < count; i++) {
+					var furry = (await known_methods[event.interface.args[0]]({ agent: user_agent })) as {
+						artists: string[];
+						sources: string[];
+						width: number;
+						height: number;
+						url: string;
+						type: string;
+						name: string;
+						id: string;
+						shortURL: string;
+						ext: string;
+						size: number;
+						reportURL: string;
+					};
 
-				var file_id = random_id() + get_file_extension(furry.url);
+					var file_id = random_id() + get_file_extension(furry.url);
 
-				await download(furry.url, "./tmp/", {
-					filename: file_id
-				});
+					await download(furry.url, "./tmp/", {
+						filename: file_id
+					});
 
-				await event.interface.send_picture_message("./tmp/" + file_id);
+					try {
+						await event.interface.send_picture_message("./tmp/" + file_id);
+					} catch (e: any) {
+						log("furry", "Failed to send picture message: " + e);
+						i--;
+					}
+				}
 				
 				return empty;
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("yiff", "See yiff!", "Use '#yiff [what?/list?]' to see yiff!", "yiff", {
+		get_command_manager().add_command(new Command("yiff", "See yiff!", "Use '#yiff [what?/list?][count?]' to see yiff!", "yiff", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
+				var count = 1;
 				if (event.interface.args.length != 1) {
 					if (event.interface.args.length == 0) {
 						event.interface.args.push("straight");
+					} else if (event.interface.args.length == 2) {
+						count = parseInt(event.interface.args[1]);
 					} else {
 						return fail;
 					}
+				}
+
+				if (10 < count) {
+					return {
+						is_response: true,
+						response: "You want too much yiff get help."
+					};
 				}
 
 
@@ -178,28 +206,37 @@ export default {
 					};
 				}
 
-				var furry = (await known_methods[event.interface.args[0]]({ agent: user_agent })) as {
-					artists: string[];
-					sources: string[];
-					width: number;
-					height: number;
-					url: string;
-					type: string;
-					name: string;
-					id: string;
-					shortURL: string;
-					ext: string;
-					size: number;
-					reportURL: string;
-				};
+				for (let i = 0; i < count; i++) {
+					var furry = (await known_methods[event.interface.args[0]]({ agent: user_agent })) as {
+						artists: string[];
+						sources: string[];
+						width: number;
+						height: number;
+						url: string;
+						type: string;
+						name: string;
+						id: string;
+						shortURL: string;
+						ext: string;
+						size: number;
+						reportURL: string;
+					};
+	
+					var file_id = random_id() + get_file_extension(furry.url);
+	
+					await download(furry.url, "./tmp/", {
+						filename: file_id
+					});
+	
+					try {
+						await event.interface.send_picture_message("./tmp/" + file_id);
+					} catch (e: any) {
+						log("furry", "Failed to send picture message: " + e);
+						i--;
+					}
+				}
 
-				var file_id = random_id() + get_file_extension(furry.url);
 
-				await download(furry.url, "./tmp/", {
-					filename: file_id
-				});
-
-				await event.interface.send_picture_message("./tmp/" + file_id);
 				
 				return empty;
 			}

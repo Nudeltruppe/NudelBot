@@ -31,7 +31,7 @@
 		<script type="module">
 			import { SocketConnection } from "./js/websocket.js";
 
-			var ws = new SocketConnection("wss://" + location.host);
+			var ws = new SocketConnection((window.location.origin.startsWith("https://") ? "wss://" : "ws://") + location.host);
 			ws.initialize().then(async function (socket) {
 				var commands = await ws.socket_call("api/commands", {});
 				
