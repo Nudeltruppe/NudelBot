@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, rmSync } from "fs";
 import { existsSync } from "node:fs";
 import { Command, CommandEvent, CommandExecutor, CommandResponse } from "../../command/command";
-import { Config } from "../../config";
+import { Config, export_configs } from "../../config";
 import { CrashDump } from "../../crash";
 import { empty, fail, get_command_manager, get_config_cache, get_express, get_plugin_loader, get_starttime, get_subsystems } from "../../global";
 import { check_permission, get_roles, push_role, remove_role } from "../../command/permission";
@@ -305,6 +305,20 @@ export default {
 			execSync("zip -r tmp/config.zip config*");
 
 			res.sendFile(process.cwd() + "/tmp/config.zip");
+		});
+
+		get_express().get("/config.json", (req, res) => {
+			if (!req.query.token) {
+				res.send("Invalid token!");
+				return;
+			}
+
+			if (!check_permission(lookup_token(req.query.token as string).user, "status")) {
+				res.send("Invalid token!");
+				return;
+			}
+
+			res.send(JSON.stringify(export_configs()));
 		});
 	},
 

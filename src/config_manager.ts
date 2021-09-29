@@ -1,4 +1,5 @@
 import { readFileSync, writeFileSync } from "fs";
+import fetch from "node-fetch";
 import { export_configs, import_configs } from "./config";
 import { log } from "./logger";
 
@@ -13,7 +14,14 @@ switch (process.argv[2]) {
 			const file = process.argv[3];
 			log("config_manager", `Importing config from ${file}`);
 
-			import_configs(JSON.parse(readFileSync(file).toString()));
+			if (file.startsWith("http")) {
+				log("config_manager", "Downloading config from URL");
+				fetch(file).then((res) => res.json()).then((json) => {
+					import_configs(json);
+				});
+			} else {
+				import_configs(JSON.parse(readFileSync(file).toString()));
+			}
 		}
 		break;
 
