@@ -8,6 +8,7 @@ data.json
 env
 downloads
 logs
+exports
 #Mac files
 
 ._*
