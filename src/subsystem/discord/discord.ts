@@ -2,7 +2,7 @@ import { Client, VoiceConnection } from "discord.js";
 import download from "download";
 import { EventEmitter } from "stream";
 import { Command, CommandEvent, CommandEventInterface, CommandExecutor, CommandResponse } from "../../command/command";
-import { Config } from "../../config";
+import { Config, since_message } from "../../config";
 import { empty, fail, get_command_manager, get_config_cache, set_last_command_event } from "../../global";
 import { log } from "../../logger";
 import { random_id } from "../../utils";
@@ -55,6 +55,8 @@ export class DiscordSubsystem extends EventEmitter implements Subsystem {
 			this.emit("message", msg, this.client);
 
 			log("discord", "[" + msg.author.username + "/" + msg.author.id + "] " + msg.content);
+
+			since_message();
 
 			if (msg.content.startsWith(get_command_manager().prefix)) {
 				var files: string[] = [];

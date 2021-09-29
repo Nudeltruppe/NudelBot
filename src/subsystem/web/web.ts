@@ -3,7 +3,7 @@ import { lookup_token } from "../../api/authentication";
 import { add_host_file } from "../../api/express";
 import { add_route, WsMessage, WsRoute } from "../../api/websocket";
 import { CommandEvent, CommandEventInterface } from "../../command/command";
-import { Config } from "../../config";
+import { Config, since_message } from "../../config";
 import { get_command_manager, get_config_cache, get_subsystems, set_last_command_event } from "../../global";
 import { log } from "../../logger";
 
@@ -36,6 +36,8 @@ export class WebSubsystem implements Subsystem {
 		add_route({
 			route: "api/shell",
 			executer: function(message: ShellExecuteRequest, socket: WebSocket) {
+				since_message();
+
 				var command_interface = {
 					message_raw_object: message,
 

@@ -1,7 +1,8 @@
 import { Socket } from "net";
 import WebSocket, * as ws from "ws";
 import { Command } from "../command/command";
-import { get_command_manager, get_server, get_starttime, set_ws_server } from "../global";
+import { Config } from "../config";
+import { get_command_manager, get_config_cache, get_server, get_starttime, set_ws_server } from "../global";
 import { log } from "../logger";
 
 export interface WsMessage {
@@ -26,6 +27,10 @@ interface WsCommands extends WsMessage {
 
 interface WsCommandPrefix extends WsMessage {
 	prefix: string;
+}
+
+interface DataSince extends WsMessage {
+	since: Config["data_since"];
 }
 
 var routes: WsRoute[] = [];
@@ -99,6 +104,14 @@ export function load_websocket_api(): void  {
 			return Promise.resolve(message);
 		}
 	} as WsRoute);
+
+	add_route({
+		route: "api/data-since",
+		executer: function(message: DataSince, socket: WebSocket) {
+			message.since = (get_config_cache().file_cache as Config).data_since;
+			return Promise.resolve(message);
+		}
+	})
 }
 
 export function add_route(route: WsRoute): void  {

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>NudelBot - Since</title>
+</head>
+<body>
+	<p id="data-since"></p>
+	<script type="module">
+		import { SocketConnection } from "./js/websocket.js";
+
+		var ws = new SocketConnection((window.location.origin.startsWith("https://") ? "wss://" : "ws://") + location.host);
+		ws.initialize().then(async function (socket) {
+			var since = await ws.socket_call("api/data-since", {});
+
+			document.getElementById("data-since").innerHTML = JSON.stringify(since.since);
+
+			ws.websocket.onclose = _ => {
+				console.log("Connection closed.");
+			};
+			ws.websocket.close();
+		});
+	</script>
+</body>
+</html>

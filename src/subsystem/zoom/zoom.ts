@@ -1,7 +1,7 @@
 import request from "request";
 import { add_host_file } from "../../api/express";
 import { CommandEvent, CommandEventInterface } from "../../command/command";
-import { Config } from "../../config";
+import { Config, since_message } from "../../config";
 import { get_command_manager, get_config_cache, get_express, set_last_command_event } from "../../global";
 import { log } from "../../logger";
 
@@ -50,6 +50,8 @@ export class ZoomSubsystem implements Subsystem {
 			var payload = (req.body as ZoomCommand).payload;
 
 			log("zoom", `[${payload.toJid}] ${payload.cmd}`);
+
+			since_message();
 
 			if (payload.cmd.startsWith(get_command_manager().prefix)) {
 				var command_interface = {
