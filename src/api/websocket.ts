@@ -1,9 +1,12 @@
 import { Socket } from "net";
 import WebSocket, * as ws from "ws";
 import { Command } from "../command/command";
-import { Config } from "../config";
+import { check_permission } from "../command/permission";
+import { Config, export_configs, import_configs } from "../config";
 import { get_command_manager, get_config_cache, get_server, get_starttime, set_ws_server } from "../global";
 import { log } from "../logger";
+import { do_soft_reload } from "../softreload";
+import { AuthenticationRequest, lookup_token } from "./authentication";
 
 export interface WsMessage {
 	route: string;
@@ -31,6 +34,11 @@ interface WsCommandPrefix extends WsMessage {
 
 interface DataSince extends WsMessage {
 	since: Config["data_since"];
+}
+
+export interface PullPush extends WsMessage {
+	token: string;
+	data: object;
 }
 
 var routes: WsRoute[] = [];
@@ -111,7 +119,52 @@ export function load_websocket_api(): void  {
 			message.since = (get_config_cache().file_cache as Config).data_since;
 			return Promise.resolve(message);
 		}
-	})
+	} as WsRoute);
+
+	add_route({
+		route: "api/pull",
+		executer: function(message: PullPush, socket: WebSocket) {
+			var user = lookup_token(message.token);
+			if (!check_permission(user.user, "status")) {
+				return Promise.resolve({
+					status: "no-permission"
+				});
+			}
+
+			message.data = export_configs();
+			return Promise.resolve(message);
+		}
+	} as WsRoute);
+
+	add_route({
+		route: "api/push",
+		executer: function(message: PullPush, socket: WebSocket) {
+			var user = lookup_token(message.token);
+			if (!check_permission(user.user, "status")) {
+				return Promise.resolve({
+					status: "no-permission"
+				});
+			}
+
+			import_configs(message.data as any);
+			return Promise.resolve(message);
+		}
+	} as WsRoute);
+
+	add_route({
+		route: "api/soft-reload",
+		executer: function(message: AuthenticationRequest, socket: WebSocket) {
+			var user = lookup_token(message.token);
+			if (!check_permission(user.user, "status")) {
+				return Promise.resolve({
+					status: "no-permission"
+				});
+			}
+
+			do_soft_reload();
+		}
+	} as WsRoute);
+
 }
 
 export function add_route(route: WsRoute): void  {
@@ -122,5 +175,73 @@ export function add_route(route: WsRoute): void  {
 	} else {
 		log("websocket", "add route: " + route.route);
 		routes.push(route);
+	}
+}
+
+export class ConnectionSocket {
+
+	socket_url: String;
+	token: String | undefined;
+	is_in_call: Boolean;
+	websocket: WebSocket | undefined = undefined;
+
+
+	constructor(socket_url: String, token: String | undefined) {
+		this.socket_url = socket_url;
+		this.token = token;
+		this.is_in_call = true;
+	}
+
+	async initialize(): Promise<WebSocket> {
+		return new Promise((resolve, reject) => {
+			this.websocket = new WebSocket(this.socket_url as string);
+			this.websocket.onopen = _ => {
+				log("websocket-client", "Websocket for " + this.socket_url + " is ready!");
+				this.is_in_call = false;
+				resolve(this.websocket as WebSocket);
+			};
+		});
+	}
+
+	async socket_call(endpoint: String, data: Object): Promise<Object> {
+		return new Promise((resolve, reject) => {
+			if (this.is_in_call) {
+				reject("Socket in call already!");
+			}
+
+			if(!!this.websocket) {
+				this.websocket.onmessage = msg => {
+					log("websocket-client", "Websocket did recive: " + msg.data);
+					resolve(JSON.parse(msg.data as any));
+				};
+
+				this.websocket.send(JSON.stringify({
+					...{
+						route: endpoint,
+						token: this.token
+					},
+					...data
+				}));
+			} else {
+				reject("Call initialize first!");
+			}
+		});
+	}
+
+	async wait_for_message(): Promise<Object> {
+		return new Promise((resolve, reject) => {
+			if (this.is_in_call) {
+				reject("Socket in call already!");
+			}
+
+			if(!!this.websocket) {
+				this.websocket.onmessage = msg => {
+					log("websocket-client", "Websocket did recive: " + msg.data);
+					resolve(JSON.parse(msg.data as any));
+				};
+			} else {
+				reject("Call initialize first!");
+			}
+		});
 	}
 }

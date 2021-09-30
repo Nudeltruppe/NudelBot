@@ -165,3 +165,12 @@ export function lookup_token(token: string): AuthenticationToken {
 		throw new Error("Token not found");
 	}
 }
+
+export function lookup_user(user: string): string {
+	var token = Object.keys((authentication_storage.file_cache as AuthenticationStorage).tokens).find(x => (authentication_storage.file_cache as AuthenticationStorage).tokens[x].user == user);
+	if (token != undefined) {
+		return (authentication_storage.file_cache as AuthenticationStorage).tokens[token].token;
+	} else {
+		throw new Error("User not found");
+	}
+}
