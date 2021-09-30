@@ -291,6 +291,43 @@ export default {
 			}
 		} as CommandExecutor, "status"));
 
+		get_command_manager().add_command(new Command("repeat", "Repeat a command!", "Use '#repeat [count][command]' to repeat a command!", "repeat 10 say hi", {
+			execute: async (event: CommandEvent): Promise<CommandResponse> => {
+				if (event.interface.args.length < 2) {
+					return fail;
+				}
+
+				var count = parseInt(event.interface.args.shift() as string);
+				var command = "#" + event.interface.args.join(" ");
+
+				event.interface.command = command.split(" ")[0];
+				event.interface.message = command;
+
+				event.interface.args = event.get_arguments(event.interface.message.split(" "));
+
+				if (event.interface.command == "#repeat") {
+					return {
+						is_response: true,
+						response: "You can't repeat repeat!"
+					};
+				}
+
+				if (10 < count) {
+					return {
+						is_response: true,
+						response: "Get some fucking help!"
+					};
+				}
+
+				for (var i = 0; i < count; i++) {
+					log("utils", "Executing command: " + command + "!");
+					await get_command_manager().on_command(event, event.subsystem);
+				}
+
+				return empty;
+			}
+		} as CommandExecutor, undefined));
+
 		get_express().get("/config.zip", (req, res) => {
 			if (!req.query.token) {
 				res.send("Invalid token!");
