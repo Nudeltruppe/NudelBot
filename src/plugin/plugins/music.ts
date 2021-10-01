@@ -6,6 +6,7 @@ import { Command, CommandEvent, CommandExecutor, CommandResponse } from "../../c
 import { empty, get_command_manager } from "../../global";
 import { DiscordSubsystem } from "../../subsystem/discord/discord";
 import { Plugin } from "../plugin";
+import { playlistInfo } from "youtube-ext";
 
 interface MusicStore {
 	[key: string]: Playlist;
@@ -234,10 +235,27 @@ export default {
 									for (var i = 0; i < playlist.songs.length; i++) {
 										response += `${i + 1}. ${playlist.songs[i].yt_link}\n`;
 									}
-									return {
-										is_response: true,
-										response: response
-									};
+
+									if (response.length > 2000) {
+										const numChunks = Math.ceil(response.length / 2000)
+								
+										for (let i = 0, o = 0; i < numChunks; ++i) {
+											let x = 2000;
+											while (response[o + x] != "\n") {
+												x--;
+											}
+
+											await event.interface.send_message(response.substr(o, x + 1));
+											o += x;
+										}
+	
+										return empty;
+									} else {
+										return {
+											is_response: true,
+											response: response
+										};
+									}
 								}
 							}
 						}
@@ -337,6 +355,48 @@ export default {
 							}
 						}
 						break;
+					
+					case "import":
+						{
+							var playlist_name = event.interface.args.shift();
+							var playlist_s = event.interface.args.shift();
+
+							if (playlist_s === undefined || playlist_name === undefined) {
+								return {
+									is_response: true,
+									response: "Usage: playlist import <playlist> <yt playlist>"
+								};
+							}
+
+							if (music_store[playlist_name] !== undefined) {
+								return {
+									is_response: true,
+									response: "Playlist already exists."
+								};
+							} else {
+								var videos: string[] = [];
+								var fetched_playlist = await playlistInfo(playlist_s);
+
+								fetched_playlist.videos.forEach(video => {
+									videos.push("https://www.youtube.com/watch?v=" + video.id);
+								});
+
+								var songs = videos.map(v => {
+									return {
+										yt_link: v,
+									} as Song;
+								});
+
+								music_store[playlist_name] = new Playlist(playlist_name, songs);
+								write_config();
+
+								return {
+									is_response: true,
+									response: "Imported " + fetched_playlist.videos.length + " songs."
+								};
+							}
+						}
+						break;
 
 					default:
 						return {
@@ -368,10 +428,27 @@ export default {
 								for (var i = 0; i < queue.length; i++) {
 									response += (i + 1) + ". " + queue[i].yt_link + "\n";
 								}
-								return {
-									is_response: true,
-									response: response
-								};
+
+								if (response.length > 2000) {
+									const numChunks = Math.ceil(response.length / 2000)
+							
+									for (let i = 0, o = 0; i < numChunks; ++i) {
+										let x = 2000;
+										while (response[o + x] != "\n") {
+											x--;
+										}
+
+										await event.interface.send_message(response.substr(o, x + 1));
+										o += x;
+									}
+
+									return empty;
+								} else {
+									return {
+										is_response: true,
+										response: response
+									};
+								}
 							}
 						}
 						break;
