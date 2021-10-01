@@ -97,7 +97,11 @@ class Player extends EventEmitter {
 
 			dispatcher.on("error", (e) => {
 				console.log(e);
-				message.channel.send("Error playing song: " + e);
+				message.channel.send("Error playing song: " + e + ". Skipping...");
+
+				var element = this.queue.shift();
+				this.queue.push(element as Song);
+				this.emit("play");
 			});
 
 			this.dispatcher = dispatcher;
@@ -495,9 +499,6 @@ export default {
 									response: "Please join a voice channel to use this command or load a playlist."
 								};
 							} else {
-								var element = player.queue.shift();
-								player.queue.push(element as Song);
-
 								player.emit("queue_changed");
 								return {
 									is_response: true,
