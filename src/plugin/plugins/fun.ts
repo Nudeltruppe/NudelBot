@@ -94,10 +94,10 @@ export default {
 				var channel = await ((await (event.subsystem as DiscordSubsystem).client.channels.fetch(event.interface.args[0])) as VoiceChannel).join();
 
 				if (channel) {
-					var stream = ytdl(url, { filter: "audioonly" });
+					var stream = ytdl(url, { filter: "audioonly", quality: "lowestaudio" });
 					var dispatcher = channel.play(stream, { seek: 0, volume: true });
 
-					dispatcher.on("end", () => {
+					dispatcher.on("finish", () => {
 						channel?.disconnect();
 					});
 
@@ -106,7 +106,6 @@ export default {
 						if (reaction._emoji.name == "🛑" && !reaction.me) {
 							dispatcher.destroy();
 							stream.destroy();
-							channel?.disconnect();
 						}
 
 						return reaction._emoji.name == "🛑" && !reaction.me;
@@ -135,10 +134,10 @@ export default {
 				if ((event.interface.message_raw_object as Message).member?.voice.channel) {
 					var channel = await (event.interface.message_raw_object as Message).member?.voice.channel?.join();
 					if (channel) {
-						var stream = ytdl(url, { filter: "audioonly" });
+						var stream = ytdl(url, { filter: "audioonly", quality: "lowestaudio" });
 						var dispatcher = channel.play(stream, { seek: 0, volume: true });
 
-						dispatcher.on("end", () => {
+						dispatcher.on("finish", () => {
 							channel?.disconnect();
 						});
 
@@ -147,7 +146,6 @@ export default {
 							if (reaction._emoji.name == "🛑" && !reaction.me) {
 								dispatcher.destroy();
 								stream.destroy();
-								channel?.disconnect();
 							}
 
 							return reaction._emoji.name == "🛑" && !reaction.me;
