@@ -596,7 +596,9 @@ export default {
 				}
 
 				return empty;
-			}
+			},
+
+			subsystems: ["discord"]
 		} as CommandExecutor, undefined));
 	},
 

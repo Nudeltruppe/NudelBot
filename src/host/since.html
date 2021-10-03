@@ -1,13 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/style.css">
+	<script type="module" src="js/script.js" defer></script>
+
 	<title>NudelBot - Since</title>
 </head>
 <body>
-	<p id="data-since"></p>
+	<div class="top">
+		<div class="bar black card left-align large">
+			<a href="/" class="bar-item button padding-large dark-grey hover-grey">Home</a>
+			<a href="commands.html" class="bar-item button padding-large dark-grey hover-grey">Commands</a>
+			<a href="changelog.html" class="bar-item button padding-large dark-grey hover-grey">Changelogs</a>
+			<a href="auth.html" class="bar-item button padding-large dark-grey hover-grey" id="login_button">LogIn</a>
+			<a href="since.html" class="bar-item button padding-large dark-grey hover-grey">Since</a>
+			<a href="donate.html" class="bar-item button padding-large dark-grey hover-grey">Donate</a>
+			<p class="bar-itme black padding-large right-align" style="margin-top: 0px;" id="login_text"></p>
+		</div>
+	</div>
+	<header class="container black center" style="padding:50px 16px">
+		<a id = "nudel-bot-home" href="index.html"><h1 class="margin jumbo">NudelBot</h1></a>
+		<p class="xlarge">Welcome to the NudelBot since site!</p>
+		<p class="xlarge">Here you can see the command usage!</p>
+	</header>
+
+	<div class="row-padding dark-grey padding-64 container center">
+		<h1>Total usage of commands in %</h1>
+		<canvas id="canvas" style="background-color: white;" height="800" width="950"></canvas>
+
+		<br>
+		<br>
+
+
+		<h1>Commands last used:</h1>
+		<p id="data-since"></p>
+
+		<br>
+		<br>
+
+		<button class="button grey hover-black" id="copy">Copy raw data.</button>
+	</div>
+
+	<footer class="bar black card left-align">
+		<p style="display: inline-flexbox;">Copyright (c) 2021 Glowman554</p>
+	</footer>
+
 	<script type="module">
 		import { SocketConnection } from "./js/websocket.js";
 
@@ -15,13 +54,120 @@
 		ws.initialize().then(async function (socket) {
 			var since = await ws.socket_call("api/data-since", {});
 
-			document.getElementById("data-since").innerHTML = JSON.stringify(since.since);
+			document.getElementById("copy").onclick = function () {
+				copy2Clipboard(JSON.stringify(since.since, undefined, 4));
+				alert("Copied to clipboard!");
+			}
+
+			var num_commands_used = 0;
+
+			Object.keys(since.since.commands).forEach(element => {
+				num_commands_used += since.since.commands[element].num_uses;
+			});
+
+			var item_names = [];
+			var item_values = [];
+
+			var max_val = 0;
+
+			Object.keys(since.since.commands).forEach(element => {
+				var per_cent = (since.since.commands[element].num_uses / num_commands_used) * 100;
+
+				if (per_cent > max_val) {
+					max_val = per_cent;
+				}
+
+				item_values.push(per_cent);
+				item_names.push(element);
+			});
+
+			max_val = Math.ceil(max_val) + 1;
+
+			draw_bar_plot("Usage in %", item_names, item_values, max_val);
+
+			var last_used_str = "";
+
+			Object.keys(since.since.commands).forEach(element => {
+				last_used_str += element + ": " + new Date(since.since.commands[element].last_used).toUTCString() + "<br>";
+			});
+
+			last_used_str += "Last message: " + new Date(since.since.last_message_time).toUTCString() + "<br>";
+			last_used_str += "Last command: " + new Date(since.since.last_command_time).toUTCString() + "<br>";
+
+			document.getElementById("data-since").innerHTML = last_used_str;
 
 			ws.websocket.onclose = _ => {
 				console.log("Connection closed.");
 			};
 			ws.websocket.close();
 		});
+
+		function draw_bar_plot(header, itemName, itemValue, Val_Max) {
+			function computeHeight(value) {
+				y = canvas.height - value * yScale;	
+			}
+
+			var sections = itemName.length;
+			var stepSize = 1;
+			var columnSize = 50;
+			var rowSize = 60;
+			var margin = 10;
+
+			var canvas = document.getElementById("canvas");
+			var context = canvas.getContext("2d");
+			context.fillStyle = "#000;";
+
+			var yScale = (canvas.height - columnSize - margin) / (Val_Max);
+			var xScale = (canvas.width - rowSize) / (sections + 1);
+
+			context.strokeStyle="#000;";
+			context.beginPath();
+
+			context.font = "19 pt Arial;"
+			context.fillText(header, 0,columnSize - margin);
+
+			context.font = "16 pt Helvetica";
+
+			var count = 0;
+			var y;
+			for (let scale = Val_Max; scale >= 0; scale = scale - stepSize) {
+				y = columnSize + (yScale * count * stepSize); 
+				context.fillText(scale, margin, y + margin);
+				context.moveTo(rowSize,y)
+				context.lineTo(canvas.width,y)
+				count++;
+			}
+			context.stroke();
+
+			context.font = "20 pt Verdana";
+			context.textBaseline="bottom";
+			for (let i = 0; i < itemName.length; i++) {
+				computeHeight(itemValue[i]);
+				context.fillText(itemName[i], xScale * (i + 2), y - margin);
+			}
+
+			context.fillStyle="#9933FF;";
+			context.shadowColor = 'rgba(128,128,128, 0.5)';
+
+			context.shadowOffsetX = 9;
+			context.shadowOffsetY = 3;
+
+			context.translate(0,canvas.height - margin);
+			context.scale(xScale,-1 * yScale);
+
+			for (let i = 0; i < itemValue.length; i++) {
+				context.fillRect(i + 2, 0, 0.3, itemValue[i]);
+			}
+		}
+
+		function copy2Clipboard(str) {
+			var ta = document.createElement('textarea');
+			ta.value = str;
+			document.body.appendChild(ta);
+			ta.select();
+			document.execCommand('copy');
+			document.body.removeChild(ta);
+		}
 	</script>
 </body>
 </html>
