@@ -1,3 +1,4 @@
+import { TextChannel, User } from "discord.js";
 import download from "download";
 import { FurryBot } from "furry-wrapper";
 import { APIResponse, Options } from "furry-wrapper/dist/@types/Base";
@@ -6,6 +7,7 @@ import { Command, CommandEvent, CommandExecutor, CommandResponse } from "../../c
 import { check_permission } from "../../command/permission";
 import { empty, fail, get_command_manager, user_agent } from "../../global";
 import { log } from "../../logger";
+import { DiscordSubsystem } from "../../subsystem/discord/discord";
 import { get_file_extension, random_id } from "../../utils";
 import { Plugin } from "../plugin";
 
@@ -163,6 +165,98 @@ export default {
 				return empty;
 			}
 		} as CommandExecutor, undefined));
+
+		get_command_manager().add_command(new Command("furspam", "Spam the dm's with furs!", "Use '#furspam [count][@somebody]' to spam the chat with furs!\n\nExample: \n#furspam 10 @somebody", "furspam", {
+			execute: async (event: CommandEvent): Promise<CommandResponse> => {
+				if (event.interface.args.length != 2 || !event.interface.mentions || event.interface.mentions.length != 1) {
+					return fail;
+				}
+
+				try {
+					var user = await (event.subsystem as DiscordSubsystem).client.users.fetch(event.interface.mentions[0]);
+				} catch (e: any) {
+					return {
+						is_response: true,
+						response: "I can't find that user! (" + event.interface.mentions[0] + ")"
+					}
+				}
+
+				if (!user.dmChannel) {
+					await user.createDM();
+					user = await (event.subsystem as DiscordSubsystem).client.users.fetch(event.interface.mentions[0]);
+				}
+
+				if (!user) {
+					return {
+						is_response: true,
+						response: "I can't find that user or dm channel! (" + event.interface.mentions[0] + ")"
+					}
+				}
+
+				if (!user.dmChannel) {
+					return {
+						is_response: true,
+						response: "I can't find that user or dm channel! (" + event.interface.mentions[0] + ")"
+					}
+				}
+
+				try {
+					var channel = await (event.subsystem as DiscordSubsystem).client.channels.fetch(user.dmChannel.id) as TextChannel;
+				} catch (e: any) {
+					return {
+						is_response: true,
+						response: "I can't find that user's dm channel! (" + user.dmChannel.id + ")"
+					}
+				}
+
+				if (!channel) {
+					return fail;
+				}
+
+				event.interface.send_message("FURRY ATTACK!!!!");
+
+
+				for (let i = 0; i < parseInt(event.interface.args[0]); i++) {
+					try {
+						var furry = (await FurryBot.furry.fursuit({ agent: user_agent })) as {
+							artists: string[];
+							sources: string[];
+							width: number;
+							height: number;
+							url: string;
+							type: string;
+							name: string;
+							id: string;
+							shortURL: string;
+							ext: string;
+							size: number;
+							reportURL: string;
+						};
+		
+						var file_id = random_id() + get_file_extension(furry.url);
+		
+						await download(furry.url, "./tmp/", {
+							filename: file_id
+						});
+
+						try {
+							await channel.send("", {
+								files: ["./tmp/" + file_id]
+							});
+						} catch (e: any) {
+							log("furry", "Failed to send picture message: " + e);
+							i--;
+						}
+					} catch (e: any) {
+						log("furry", "Failed to get furry: " + e);
+						i--;
+					}
+				}
+
+				return empty;
+			},
+			subsystems: ["discord"]
+		} as CommandExecutor, "spam"));
 
 		get_command_manager().add_command(new Command("yiff", "See yiff!", "Use '#yiff [what?/list?][count?]' to see yiff!", "yiff", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
