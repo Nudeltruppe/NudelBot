@@ -32,8 +32,8 @@ interface WsCommandPrefix extends WsMessage {
 	prefix: string;
 }
 
-interface DataSince extends WsMessage {
-	since: Config["data_since"];
+interface Datascience extends WsMessage {
+	science: Config["data_science"];
 }
 
 export interface PullPush extends WsMessage {
@@ -114,9 +114,9 @@ export function load_websocket_api(): void  {
 	} as WsRoute);
 
 	add_route({
-		route: "api/data-since",
-		executer: function(message: DataSince, socket: WebSocket) {
-			message.since = (get_config_cache().file_cache as Config).data_since;
+		route: "api/data-science",
+		executer: function(message: Datascience, socket: WebSocket) {
+			message.science = (get_config_cache().file_cache as Config).data_science;
 			return Promise.resolve(message);
 		}
 	} as WsRoute);

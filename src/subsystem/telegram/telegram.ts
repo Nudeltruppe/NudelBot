@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 import { Telegraf } from "telegraf";
 import { Message } from "telegraf/typings/core/types/typegram";
 import { CommandEvent, CommandEventInterface } from "../../command/command";
-import { Config, since_message } from "../../config";
+import { Config, science_message } from "../../config";
 import { get_command_manager, get_config_cache, set_last_command_event } from "../../global";
 import { log } from "../../logger";
 import { get_file_extension, random_id } from "../../utils";
@@ -37,7 +37,7 @@ export class TelegramSubsystem implements Subsystem {
 		this.client.on("text", async (ctx) => {
 			log("telegram", "[" + ctx.from.username + "/" + ctx.from.id + "] " + ctx.message.text);
 
-			since_message();
+			science_message();
 
 			if (ctx.message.text.startsWith(get_command_manager().prefix)) {
 				var files: string[] = [];
@@ -160,7 +160,7 @@ export class TelegramSubsystem implements Subsystem {
 		this.client.on("photo", async (ctx) => {
 			log("telegram", "[" + ctx.from.username + "/" + ctx.from.id + "] " + ctx.message.caption);
 
-			since_message();
+			science_message();
 
 			if (ctx.message.caption?.startsWith(get_command_manager().prefix)) {
 				var files: string[] = [];
@@ -264,7 +264,7 @@ export class TelegramSubsystem implements Subsystem {
 		this.client.on("document", async (ctx) => {
 			log("telegram", "[" + ctx.from.username + "/" + ctx.from.id + "] " + ctx.message.caption);
 
-			since_message();
+			science_message();
 
 			if (ctx.message.caption?.startsWith(get_command_manager().prefix)) {
 				var files: string[] = [];

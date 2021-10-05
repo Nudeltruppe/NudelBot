@@ -6,7 +6,7 @@
 	<link rel="stylesheet" href="css/style.css">
 	<script type="module" src="js/script.js" defer></script>
 
-	<title>NudelBot - Since</title>
+	<title>NudelBot - science</title>
 </head>
 <body>
 	<div class="top">
@@ -15,14 +15,14 @@
 			<a href="commands.html" class="bar-item button padding-large dark-grey hover-grey">Commands</a>
 			<a href="changelog.html" class="bar-item button padding-large dark-grey hover-grey">Changelogs</a>
 			<a href="auth.html" class="bar-item button padding-large dark-grey hover-grey" id="login_button">LogIn</a>
-			<a href="since.html" class="bar-item button padding-large dark-grey hover-grey">Since</a>
+			<a href="science.html" class="bar-item button padding-large dark-grey hover-grey">science</a>
 			<a href="donate.html" class="bar-item button padding-large dark-grey hover-grey">Donate</a>
 			<p class="bar-itme black padding-large right-align" style="margin-top: 0px;" id="login_text"></p>
 		</div>
 	</div>
 	<header class="container black center" style="padding:50px 16px">
 		<a id = "nudel-bot-home" href="index.html"><h1 class="margin jumbo">NudelBot</h1></a>
-		<p class="xlarge">Welcome to the NudelBot since site!</p>
+		<p class="xlarge">Welcome to the NudelBot science site!</p>
 		<p class="xlarge">Here you can see the command usage!</p>
 	</header>
 
@@ -35,7 +35,7 @@
 
 
 		<h1>Commands last used:</h1>
-		<p id="data-since"></p>
+		<p id="data-science"></p>
 
 		<br>
 		<br>
@@ -52,17 +52,17 @@
 
 		var ws = new SocketConnection((window.location.origin.startsWith("https://") ? "wss://" : "ws://") + location.host);
 		ws.initialize().then(async function (socket) {
-			var since = await ws.socket_call("api/data-since", {});
+			var science = await ws.socket_call("api/data-science", {});
 
 			document.getElementById("copy").onclick = function () {
-				copy2Clipboard(JSON.stringify(since.since, undefined, 4));
+				copy2Clipboard(JSON.stringify(science.science, undefined, 4));
 				alert("Copied to clipboard!");
 			}
 
 			var num_commands_used = 0;
 
-			Object.keys(since.since.commands).forEach(element => {
-				num_commands_used += since.since.commands[element].num_uses;
+			Object.keys(science.science.commands).forEach(element => {
+				num_commands_used += science.science.commands[element].num_uses;
 			});
 
 			var item_names = [];
@@ -70,8 +70,8 @@
 
 			var max_val = 0;
 
-			Object.keys(since.since.commands).forEach(element => {
-				var per_cent = (since.since.commands[element].num_uses / num_commands_used) * 100;
+			Object.keys(science.science.commands).forEach(element => {
+				var per_cent = (science.science.commands[element].num_uses / num_commands_used) * 100;
 
 				if (per_cent > max_val) {
 					max_val = per_cent;
@@ -87,14 +87,14 @@
 
 			var last_used_str = "";
 
-			Object.keys(since.since.commands).forEach(element => {
-				last_used_str += element + ": " + new Date(since.since.commands[element].last_used).toUTCString() + "<br>";
+			Object.keys(science.science.commands).forEach(element => {
+				last_used_str += element + ": " + new Date(science.science.commands[element].last_used).toUTCString() + "<br>";
 			});
 
-			last_used_str += "Last message: " + new Date(since.since.last_message_time).toUTCString() + "<br>";
-			last_used_str += "Last command: " + new Date(since.since.last_command_time).toUTCString() + "<br>";
+			last_used_str += "Last message: " + new Date(science.science.last_message_time).toUTCString() + "<br>";
+			last_used_str += "Last command: " + new Date(science.science.last_command_time).toUTCString() + "<br>";
 
-			document.getElementById("data-since").innerHTML = last_used_str;
+			document.getElementById("data-science").innerHTML = last_used_str;
 
 			ws.websocket.onclose = _ => {
 				console.log("Connection closed.");

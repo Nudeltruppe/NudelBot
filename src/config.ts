@@ -30,7 +30,7 @@ export interface Config {
 		perms: string[];
 	}[];
 
-	data_since: {
+	data_science: {
 		commands: {
 			[key: string]: {
 				num_uses: number;
@@ -63,7 +63,7 @@ export function write_default_config(): void  {
 		default_perms: [],
 		version: "0.0.1",
 		users: [],
-		data_since: {
+		data_science: {
 			commands: {},
 			last_command_time: 0,
 			last_message_time: 0,
@@ -75,25 +75,25 @@ export function write_default_config(): void  {
 	writeFileSync("./config.json", JSON.stringify(config, null, 4));
 }
 
-export function since_message() {
-	(get_config_cache().file_cache as Config).data_since.last_message_time = Date.now();
-	(get_config_cache().file_cache as Config).data_since.num_messages++;
+export function science_message() {
+	(get_config_cache().file_cache as Config).data_science.last_message_time = Date.now();
+	(get_config_cache().file_cache as Config).data_science.num_messages++;
 
 	writeFileSync("./config.json", JSON.stringify(get_config_cache().file_cache, null, 4));
 }
 
-export function since_command(c: Command) {
-	(get_config_cache().file_cache as Config).data_since.last_command_time = Date.now();
-	(get_config_cache().file_cache as Config).data_since.num_commands_used++;
+export function science_command(c: Command) {
+	(get_config_cache().file_cache as Config).data_science.last_command_time = Date.now();
+	(get_config_cache().file_cache as Config).data_science.num_commands_used++;
 
-	if ((get_config_cache().file_cache as Config).data_since.commands[c.name] == undefined) {
-		(get_config_cache().file_cache as Config).data_since.commands[c.name] = {
+	if ((get_config_cache().file_cache as Config).data_science.commands[c.name] == undefined) {
+		(get_config_cache().file_cache as Config).data_science.commands[c.name] = {
 			num_uses: 1,
 			last_used: Date.now()
 		};
 	} else {
-		(get_config_cache().file_cache as Config).data_since.commands[c.name].num_uses++;
-		(get_config_cache().file_cache as Config).data_since.commands[c.name].last_used = Date.now();
+		(get_config_cache().file_cache as Config).data_science.commands[c.name].num_uses++;
+		(get_config_cache().file_cache as Config).data_science.commands[c.name].last_used = Date.now();
 	}
 
 	writeFileSync("./config.json", JSON.stringify(get_config_cache().file_cache, null, 4));

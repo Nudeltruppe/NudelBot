@@ -1,4 +1,4 @@
-import { since_command } from "../config";
+import { science_command } from "../config";
 import { log } from "../logger";
 import { check_permission } from "./permission";
 
@@ -164,7 +164,7 @@ export class CommandManager {
 						}
 					}
 
-					since_command(command);
+					science_command(command);
 					var result = await command.executor.execute(command_event);
 
 					if (result.is_response) {
