@@ -52,6 +52,7 @@
     "querystring": "^0.2.1",
     "request": "^2.88.2",
     "telegraf": "^4.4.1",
+    "uwuifier": "^4.0.4",
     "webuntis": "^1.15.0",
     "ws": "^7.5.3",
     "youtube-ext": "^1.0.11",

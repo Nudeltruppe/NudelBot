@@ -8,7 +8,7 @@ export function check_permission(user: string, permission: string|undefined): bo
 
 	if (loaded_user === undefined) {
 		var tmp = get_config_cache().file_cache as Config;
-		tmp.users.push({ user: user, perms: tmp.default_perms });
+		tmp.users.push({ user: user, perms: Object.assign([], tmp.default_perms) });
 		writeFileSync(get_config_cache().file, JSON.stringify(tmp, null, 4));
 
 		if (permission === undefined) {
@@ -30,7 +30,7 @@ export function get_roles(user: string): string[] {
 
 	if (loaded_user === undefined) {
 		var tmp = get_config_cache().file_cache as Config;
-		tmp.users.push({ user: user, perms: tmp.default_perms });
+		tmp.users.push({ user: user, perms: Object.assign([], tmp.default_perms) });
 		writeFileSync(get_config_cache().file, JSON.stringify(tmp, null, 4));
 
 		return tmp.default_perms;
@@ -45,7 +45,7 @@ export function push_role(user: string, permission: string): void  {
 
 	if (loaded_user === undefined) {
 		var tmp = get_config_cache().file_cache as Config;
-		var index = tmp.users.push({ user: user, perms: tmp.default_perms });
+		var index = tmp.users.push({ user: user, perms: Object.assign([], tmp.default_perms) });
 		tmp.users[index].perms.push(permission);
 		writeFileSync(get_config_cache().file, JSON.stringify(tmp, null, 4));
 	} else {
@@ -59,7 +59,7 @@ export function remove_role(user: string, permission: string): void  {
 
 	if (loaded_user === undefined) {
 		var tmp = get_config_cache().file_cache as Config;
-		var index = tmp.users.push({ user: user, perms: tmp.default_perms });
+		var index = tmp.users.push({ user: user, perms: Object.assign([], tmp.default_perms) });
 
 		var permission_to_remove = tmp.users[index].perms.indexOf(permission);
 

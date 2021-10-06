@@ -1,6 +1,7 @@
 import { Client, VoiceConnection } from "discord.js";
 import download from "download";
 import { EventEmitter } from "stream";
+import Uwuifier from "uwuifier";
 import { Command, CommandEvent, CommandEventInterface, CommandExecutor, CommandResponse } from "../../command/command";
 import { Config, science_message } from "../../config";
 import { empty, fail, get_command_manager, get_config_cache, set_last_command_event } from "../../global";
@@ -12,6 +13,8 @@ export class DiscordSubsystem extends EventEmitter implements Subsystem {
 	status_timer: NodeJS.Timer|undefined;
 	name = "discord";
 	init_done = false;
+
+	uwu_mode = false;
 
 	status = `${get_command_manager().prefix}help`;
 
@@ -113,6 +116,11 @@ export class DiscordSubsystem extends EventEmitter implements Subsystem {
 							message = message.replace(/%italic%/g, "*");
 							message = message.replace(/%code%/g, "`");
 		
+							if (this.uwu_mode) {
+								var uwu = new Uwuifier();
+								message = uwu.uwuifySentence(message);
+							}
+
 							await msg.channel.send(message);
 						}
 					},

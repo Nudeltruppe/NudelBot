@@ -221,6 +221,25 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
+		get_command_manager().add_command(new Command("uwu_mode", "Enable or disable uwu mode!", "Use '#uwu_mode' to toggle uwu mode!", "uwu_mode", {
+			execute: async (event: CommandEvent): Promise<CommandResponse> => {
+				if (event.interface.args.length != 0) {
+					return fail;
+				}
+
+				var subsystem = event.subsystem as DiscordSubsystem;
+
+				subsystem.uwu_mode = !subsystem.uwu_mode;
+
+				return {
+					is_response: true,
+					response: `uwu mode is now ${subsystem.uwu_mode ? "enabled" : "disabled"}!`
+				}
+			},
+
+			subsystems: ["discord"]
+		} as CommandExecutor, "uwu_mode"));
+
 		get_command_manager().add_command(new Command("thonksun", "Thonksun!", "Use '#thonksun' to thonksun!", "thonksun", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {
 				if (event.interface.args.length != 0) {
