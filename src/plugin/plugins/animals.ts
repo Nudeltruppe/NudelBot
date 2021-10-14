@@ -1,5 +1,10 @@
 import { TextChannel, User } from "discord.js";
 import download from "download";
+
+// we need to patch furry-wrapper here because of a api change
+
+require("fs").writeFileSync("node_modules/furry-wrapper/dist/furrybot.js", require("fs").readFileSync("node_modules/furry-wrapper/dist/furrybot.js").toString().replace(/https:\/\/yiff.rest\/v2\//g, "https://v2.yiff.rest/"));
+
 import { FurryBot } from "furry-wrapper";
 import { APIResponse, Options } from "furry-wrapper/dist/@types/Base";
 import fetch from "node-fetch";
