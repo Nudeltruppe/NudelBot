@@ -71,6 +71,53 @@ export interface Teacher {
 	name: string;
 }
 
+enum HaType {
+	GERMAN = "d",
+	MATH = "m",
+	ENGLISH = "e",
+	SPANISH = "sp",
+	FRENCH = "fr",
+	SPORT = "s",
+	PHYSICS = "ph",
+	CHEMISTRY = "ch",
+	ECONOMY = "wk",
+	HISTORY_AND_CULTURE = "ggk",
+	RELIGION = "rel",
+	ETHICS = "eth",
+	IT_HW = "it_hw",
+	IT_SW = "it_sw",
+	IT_EXCEL = "inf",
+};
+
+var known_ha_types: HaType[] = [
+	HaType.GERMAN,
+	HaType.MATH,
+	HaType.ENGLISH,
+	HaType.SPANISH,
+	HaType.FRENCH,
+	HaType.SPORT,
+	HaType.PHYSICS,
+	HaType.CHEMISTRY,
+	HaType.ECONOMY,
+	HaType.HISTORY_AND_CULTURE,
+	HaType.RELIGION,
+	HaType.ETHICS,
+	HaType.IT_HW,
+	HaType.IT_SW,
+	HaType.IT_EXCEL,
+];
+
+export interface HaStore {
+	type: HaType;
+	to_be_finished_by: {
+		day: number;
+		month: number;
+		year: number;
+	}
+	notes: string;
+}
+
+var ha_store: HaStore[];
 
 var untis_auth_store: UntisAuthStore;
 var untis_config: GeneralUntisConfig;
@@ -108,8 +155,17 @@ async function fetch_homework(): Promise<string> {
 		var subject = homework.lessons.find(lesson => lesson.id == x.lessonId)?.subject;
 		var due_date = WebUntis.convertUntisDate(x.dueDate).toLocaleDateString();
 
-		
 		homework_string += `**${subject}**: ${x.text} muss bis zum \`${due_date}\` erledigt sein!\n`;
+	}
+
+	for (let x of ha_store) {
+		var now = new Date(Date.now());
+
+		if (x.to_be_finished_by.year < now.getFullYear() || x.to_be_finished_by.month < now.getMonth() + 1 || x.to_be_finished_by.day < now.getDate()) {
+			continue;
+		}
+
+		homework_string += `**${x.type}**: ${x.notes} muss bis zum \`${x.to_be_finished_by.day}/${x.to_be_finished_by.month}/${x.to_be_finished_by.year}\` erledigt sein!\n`;
 	}
 
 	if (homework_string == "") {
@@ -125,11 +181,19 @@ export default {
 
 	async load() {
 		if (!existsSync("./config/untis.json")) {
-			log("untis", "No untis.json found, creating one ...");
+			log("untis", "No untis.jpson found, creating one ...");
 			untis_auth_store = {
 			} as UntisAuthStore;
 
 			writeFileSync("./config/untis.json", JSON.stringify(untis_auth_store, null, 4));
+		}
+
+		if (!existsSync("./config/ha.json")) {
+			log("untis", "No ha.json found, creating one ...");
+
+			ha_store = [];
+
+			writeFileSync("./config/ha.json", JSON.stringify(ha_store, null, 4));
 		}
 
 		if (!existsSync("./config/untis_config.json")) {
@@ -149,6 +213,7 @@ export default {
 
 		untis_auth_store = JSON.parse(readFileSync("./config/untis.json").toString()) as UntisAuthStore;
 		untis_config = JSON.parse(readFileSync("./config/untis_config.json").toString()) as GeneralUntisConfig;
+		ha_store = JSON.parse(readFileSync("./config/ha.json").toString()) as HaStore[];
 
 		var channel: TextChannel;
 		var message: Message;
@@ -249,6 +314,53 @@ export default {
 				return {
 					is_response: true,
 					response: "Thanks for donating!"
+				};
+			}
+		} as CommandExecutor, undefined));
+
+
+		get_command_manager().add_command(new Command("add-ha", "Add a homework!", "Use '#add-ha [date][" + known_ha_types.join("/") + "][note]' to add a homework", "add-ha 15/10/2021 d yeeeeeet!", {
+			execute: async (event: CommandEvent): Promise<CommandResponse> => {
+				if (event.interface.args.length < 3) {
+					return {
+						is_response: true,
+						response: "No args specified"
+					}
+				}
+
+				var date = event.interface.args.shift()?.split("/") as string[];
+				var ha_type = event.interface.args.shift() as string;
+
+				if (known_ha_types.indexOf(ha_type as HaType) == -1) {
+					return {
+						is_response: true,
+						response: "Unknown ha type: " + ha_type
+					};
+				}
+
+				var ha_note = event.interface.args.join(" ");
+
+				
+				var ha = {
+					notes: ha_note,
+					to_be_finished_by: {
+						day: parseInt(date[0]),
+						month: parseInt(date[1]),
+						year: parseInt(date[2])
+					},
+					type: ha_type
+				} as HaStore;
+
+				ha_store.push(ha);
+
+				writeFileSync("./config/ha.json", JSON.stringify(ha_store, null, 4));
+
+				message.edit("Fetching data...");
+				message.edit(await fetch_homework());
+
+				return {
+					is_response: true,
+					response: `Added ${ha_type}: ${ha_note} to ${date[0]}/${date[1]}/${date[2]}`
 				};
 			}
 		} as CommandExecutor, undefined));
