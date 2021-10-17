@@ -23,7 +23,7 @@ running in docker:
 	C:\Users\vossj\Documents\nudel
 
 	docker build -t nudel .
-	docker run -p 5051:5051 -v </path/to/config>:/config -it --name nudel nudel
+	docker run -p 5051:5051 -it --name nudel nudel
 
 extra information:
 	#to run tsc in watch mode
