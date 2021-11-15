@@ -5,7 +5,6 @@ import download from "download";
 import { existsSync, readdirSync, writeFileSync } from "fs";
 import fetch from "node-fetch";
 import { exec } from "node:child_process";
-import ytdl from "ytdl-core";
 import { add_host_file } from "../../api/express";
 import { Command, CommandEvent, CommandExecutor, CommandResponse } from "../../command/command";
 import { Config } from "../../config";
@@ -84,87 +83,6 @@ export default {
 			}
 		} as CommandExecutor, undefined));
 
-		get_command_manager().add_command(new Command("rickroll", "Rick roll somebody!", "Use '#rickroll [chanel_id]' to rick roll somebody! (Join a voice chat in discord and use that command!)", "rickroll test", {
-			execute: async (event: CommandEvent): Promise<CommandResponse> => {
-				if (event.interface.args.length != 1) {
-					return fail;
-				}
-
-				var url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-				var channel = await ((await (event.subsystem as DiscordSubsystem).client.channels.fetch(event.interface.args[0])) as VoiceChannel).join();
-
-				if (channel) {
-					var stream = ytdl(url, { filter: "audioonly", quality: "lowestaudio" });
-					var dispatcher = channel.play(stream, { seek: 0, volume: true });
-
-					dispatcher.on("finish", () => {
-						channel?.disconnect();
-					});
-
-					(event.interface.message_raw_object as Message).react("🛑");
-					(event.interface.message_raw_object as Message).awaitReactions((reaction, user) => {
-						if (reaction._emoji.name == "🛑" && !reaction.me) {
-							dispatcher.destroy();
-							stream.destroy();
-						}
-
-						return reaction._emoji.name == "🛑" && !reaction.me;
-					});
-						
-				}
-
-				return empty;
-			},
-
-			subsystems: ["discord"]
-		} as CommandExecutor, undefined));
-
-		get_command_manager().add_command(new Command("play", "Play a a youtube video in a vc!", "Use '#play [url]' to play a youtube video in a vc!", "play https://www.youtube.com/watch?v=dQw4w9WgXcQ", {
-			execute: async (event: CommandEvent): Promise<CommandResponse> => {
-				if (event.interface.args.length != 1) {
-					return fail;
-				}
-
-				if (!/^(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/gm.test(event.interface.args[0])) {
-					throw new Error("Not a valid url!");
-				}
-
-				var url = event.interface.args[0];
-
-				if ((event.interface.message_raw_object as Message).member?.voice.channel) {
-					var channel = await (event.interface.message_raw_object as Message).member?.voice.channel?.join();
-					if (channel) {
-						var stream = ytdl(url, { filter: "audioonly", quality: "lowestaudio" });
-						var dispatcher = channel.play(stream, { seek: 0, volume: true });
-
-						dispatcher.on("finish", () => {
-							channel?.disconnect();
-						});
-
-						(event.interface.message_raw_object as Message).react("🛑");
-						(event.interface.message_raw_object as Message).awaitReactions((reaction, user) => {
-							if (reaction._emoji.name == "🛑" && !reaction.me) {
-								dispatcher.destroy();
-								stream.destroy();
-							}
-
-							return reaction._emoji.name == "🛑" && !reaction.me;
-						});
-						
-					}
-
-				} else {
-					return {
-						is_response: true,
-						response: "Please join a voice channel first!"
-					};
-				}
-
-				return empty;
-			},
-
-			subsystems: ["discord"]
-		} as CommandExecutor, undefined));
 
 		get_command_manager().add_command(new Command("year", "See how much of this year is left!", "Use '#year' to see how much of this year is left!", "year", {
 			execute: async (event: CommandEvent): Promise<CommandResponse> => {

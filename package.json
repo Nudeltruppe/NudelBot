@@ -54,8 +54,6 @@
     "telegraf": "^4.4.1",
     "uwuifier": "^4.0.4",
     "webuntis": "^1.15.0",
-    "ws": "^7.5.3",
-    "youtube-ext": "^1.0.11",
-    "ytdl-core": "^4.9.1"
+    "ws": "^7.5.3"
   }
 }
