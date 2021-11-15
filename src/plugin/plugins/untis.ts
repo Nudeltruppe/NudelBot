@@ -221,7 +221,7 @@ async function fetch_homework(): Promise<string> {
 			log("untis", "Authentication successful!");
 		} catch (e: any) {
 			log("untis", "Error while authenticating with untis: " + e);
-			delete untis_auth_store[x];
+			// delete untis_auth_store[x]; // why did i think this is a good idea?????????
 			writeFileSync("./config/untis.json", JSON.stringify(untis_auth_store, null, 4));
 		}
 	}
