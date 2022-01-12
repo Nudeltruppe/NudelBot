@@ -172,6 +172,15 @@ export default {
 			subsystems: ["discord"]
 		} as CommandExecutor, undefined));
 
+		get_command_manager().add_command(new Command("MLGFilipo", "MLG", "Use '#MLGFilipo' to mlg", "MLGFilipo", {
+    			execute: async (event: CommandEvent): Promise<CommandResponse> => {
+        			return {
+            				is_response: true,
+            				response: "https://cdn.discordapp.com/attachments/887403115853271085/930768886519963708/IMG_2754.jpg"
+        			}
+    			}
+		} as CommandExecutor, undefined));
+
 	},
 
 	reload() {
